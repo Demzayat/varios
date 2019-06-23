@@ -1,0 +1,396 @@
+---
+title: ¿Existe relación entre los femicidios, el aborto y la tasa de personas con
+  NBI?
+author: "Demian Zayat"
+date: "24 de junio de 2019"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    depth: 4
+    df_print: paged
+    theme: cerulean
+    toc: yes
+    toc_float: yes
+institute: Big Data e inteligencia territorial. Módulo 2, Introducción a la Ciencia
+  de Datos
+---
+<style type="text/css">
+body, td {
+   font-size: 14px;
+   text-align: justify;
+  text-justify: inter-word;
+}
+code.r{
+  font-size: 12px;
+}
+pre {
+  font-size: 12px
+}
+</style>
+
+## Introducción
+
+¿Existe una vinculación entre la tasa de femicidios y la legalización del aborto? ¿Podría asociarse la mayor tasa de femicidios con la ausencia de soluciones que da el Estado frente a situaciones sociales críticas? En términos generales, tanto el aborto como los femicidios constituyen un tipo de violencia de género, y por tanto resulta razonable suponer que están asociados. Asimismo, una prohibición amplia del aborto es reflejo de una cultura machista, y esta cultura machista es también el marco adecuado para los femicidios.  Sin embargo, poder cuantificar esta relación puede resultar de interés para poder evaluar cómo la variación en las normas jurídicas puede provocar estos cambios culturales, sin perder de vista que como con _el huevo o la gallina_, los cambios culturales son los que generan el cambio de las normas. Asimismo los femicidios implican la falla del Estado en prevenir a tiempo conflictos que implican violencia u odio por razones de género.
+
+En este trabajo pretendo cuantificar cómo es la relación entre los femicidios cometidos en las distintas provincias del país y variables independientes como el voto de los senadores de esas provincias en el debate sobre el aborto, la implementación o no del protocolo de abortos no punibles (ILE), y la cantidad de personas con necesidades básicas insatisfechas (NBI) en la provincia. 
+
+La hipótesis del trabajo es que existe cierta correlación entre la tasa de femicidios y estas variables, y que las provincias que han avanzado en la implementación de la ILE, y cuyos representantes votaron a favor de la legalización del aborto, deberían tener una tasa más baja de femicidios de las provincias que no lo han hecho. Asimismo, las variables socioeconómicas de la provincia (cantidad de personas con NBI, por ejemplo) también puede tener algún tipo de incidencia en la relación, en virtud que implican la ausencia de un Estado que de soluciones frente a situaciones sociales críticas. 
+
+Para eesto voy a analizar los datos oficiales disponibles sobre femicidios (en el repositorio del Ministerio de Justicia http://datos.jus.gob.ar/dataset/registro-sistematizacion-y-seguimiento-de-femicidios-y-homicidios-agravados-por-el-genero) y cruzarlo con datos de voto de senadores, implementación del protocolo de la ILE y la tasa de personas con NBI por provincia. Con el registro de femicidios obtendré una tasa de femicidios por provincia, al dividirlo por la cantidad de habitantes. Por su parte, al existir tres senadores por provincia, se podrá calificar a la provincia dependiendo cuántos senadores se opusieron al proyecto de ley de legalización del aborto que aprobó la Cámara de Diputados. Y con respecto a la implementación de la ILE, se podrá tomar en cuenta los datos publicados por Economía Feminista (http://economiafeminita.com/mapa-de-adhesion-al-protocolo-de-aborto-no-punible-en-la-argentina/) Por último, los datos socioeconómicos los obtendré del INDEC. Con todo esto se podrán realizar distintas regresiones y analizar cómo incide cada variable en la tasa de femicidios.
+
+Sin dudas que pueden seguir agregándose variables explicativas, y que en definitiva, algunas variables tienen una autocorrelación, en tanto que una dirigencia política que no esté a favor del aborto seguramente incida en la no implementación del protocolo de ILE. Pero quizás los datos nos permitan cuantificar esta relación, y poder medir cómo podría hacerse descender la tasa de femicidios.
+
+## 1. La variable dependiente: tasa de femicidios
+
+La ley 26.791 incorporó como agravantes al artículo 80 del código penal el homicidio cometido  contra una mujer por razones de género o alguna persona por motivos de
+odio al género o a la orientación sexual, así como varones y niños víctimas de femicidio vinculado. De este modo, se recepcionó normativamente al delito de femicidio: un homicidio cometido por razones de género o por odio al género o identidad u orientación sexual. Recientemente, la jurisprudencia también a admitido como incluido en esta figura al travesticidio, u homicidio contra una pesona trans o travesti por razones de género u odio por su género.
+
+En 2015 el Ministerio de Justicia y Derechos Humanos creó la Unidad de Registro, Sistematización y Seguimiento de Femicidios y Homicidios agravados por el género (URSSF) que recopila y sistematiza información sobre el fenómeno a lo largo de todo el país. Para ello toma como fuente principal el análisis diario de medios de prensa y difusión nacionales y provinciales. Según explica en la documentación respectiva, el cuerpo de información se contrasta periódicamente con otras bases de datos con el objetivo de detectar errores y obstáculos para mejorar y fortalecer la metodología empleada; dicho cotejo puede derivar, por un lado, en la inclusión de casos que por diferentes motivos no habían sido considerados, y por otro, en la revisión de otros que sí fueron incluidos en la base de datos pero que necesitan ser objeto de un nuevo análisis^[Véase la documentación en el [repositorio](https://github.com/datos-justicia-argentina/Registro-sistematizacion-y-seguimiento-de-femicidios-y-de-homicidios-agravados-por-el-genero/blob/master/Registro-sistematizacion-y-seguimiento-de-femicidios-y-de-homicidios-agravados-por-el-genero-metadata.md)]. 
+
+Con estos datos podremos obtener la cantidad de femicidios que hubo en el país durante el año 2017, y podremos clasificarlo por provincia, con el siguiente código:
+
+```{r setup, include=FALSE}
+library(tidyverse) 
+library(lubridate)
+library(sf)
+library(RColorBrewer)
+library(gridExtra)
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
+
+paletaPurple = c("#f2f0f7", "#cbc9e2", "#9e9ac8", "#6a51a3")
+paletaAzul <- c("#eff3ff", "#bdd7e7", "#6baed6", "#2171b5")
+```
+
+```{r tasa_femicidio, message=FALSE}
+# Leer la base de femicidios
+
+femicidios <- read_csv("http://datos.jus.gob.ar/dataset/27bb9b2c-521b-406c-bdf9-98110ef73f34/resource/583cec9a-3022-4234-8b32-17692a267aac/download/registro-de-femicidios-20190609.csv")
+
+# Filtrarla por año 2017
+femicidios2017 <- femicidios %>% 
+  filter(year(hecho_fecha)== 2017)
+
+# Clasificarla por provincia
+xprovincia2017 <- femicidios2017 %>% 
+  count(hecho_provincia, name = "cant") %>% 
+  mutate(hecho_provincia = recode(hecho_provincia,
+                            "Neuquen" = "Neuquén", 
+                            "Ciudad Autónoma de Bs.As." = "Ciudad Autónoma de Bs. As.")) %>% 
+  rename(provincia = hecho_provincia)
+```
+
+Se eligió el año 2017 para usar siempre el mismo período para todas las variables. Si bien estaba disponible la información de femicidios para el 2018, no era seguro conseguir esa misma información para las variables explicatorias que se van a requerir. Por ello, decidí elegir aquél período. De acuerdo a los datos obtenidos, durante el 2017 la base de datos contabilizó `r nrow(femicidios2017)` hechos. 
+
+Al clasificarlas por Provincia se puede observar que se produjeron más casos en las provincias con más población, y por ello será necesario obtener una tasa, que indique la cantidad de femicidios por cada 100.000 habitantes. A tal fin debemos contar con la cantidad de habitantes por provincia, datos que obtendremos del Censo 2010 de la web del INDEC^[Debido a que no encontre un link directo a la base de datos para linkearlo directamente, descargue una planilla xls y la converti en tribble  manualmente.].
+
+```{r, message=FALSE}
+#Agregar la población por provincia
+provincias <- tribble(
+  ~provincia, ~poblacion,
+  "Ciudad Autónoma de Bs. As.",	2890151,
+  "Buenos Aires",	15625084,
+  "Catamarca"	,367828,
+  "Chaco",  1055259,
+  "Chubut",	509108,
+  "Córdoba",	3308876,
+  "Corrientes",	992595,
+  "Entre Ríos",	1235994,
+  "Formosa",	530162,
+  "Jujuy",	673307,
+  "La Pampa",	318951,
+  "La Rioja",	333642,
+  "Mendoza",	1738929,
+  "Misiones",	1101593,
+  "Neuquén",	551266,
+  "Río Negro",	638645,
+  "Salta",	1214441,
+  "San Juan",	681055,
+  "San Luis",	432310,
+  "Santa Cruz",	273964,
+  "Santa Fe",	3194537,
+  "Santiago del Estero",	874006,
+  "Tierra del Fuego",	127205,
+  "Tucumán",	1448188)
+
+#unir los femicidios con la población y calcular la tasa
+xprovincia2017 <- xprovincia2017 %>% 
+  left_join(provincias) %>% 
+  mutate(tasa_femicidios = round(cant/poblacion *100000,4)) %>% 
+  filter(!is.na(provincia)) %>% 
+  arrange(desc(tasa_femicidios))
+```
+
+Una vez obtenida la tasa de femicidios por provincia, podemos graficarla:
+
+```{r grafico_provincias, warning=FALSE, message=FALSE}
+#grafico tasa de femicidios
+ggplot(data = xprovincia2017, aes(x = provincia, y  = tasa_femicidios))+
+  geom_col (aes(x = reorder(provincia, tasa_femicidios)), fill = "steelblue", col = "grey20")+
+  geom_text(aes(label = tasa_femicidios), nudge_y = 0.09, size = 3)+
+  labs(title = "Grafico 1. Femicidios cada 100.000 habitantes",
+       subtitle = "Por Provincia, año 2017", x="", y ="Tasa de Femicidios")+
+  coord_flip()+
+  theme_bw()
+```
+
+O hacer un mapa:
+
+```{r, message=FALSE}
+
+#cargar el geojson
+pais <- st_read("provinciasND.geojson", quiet = TRUE)
+pais <- pais %>% 
+  select(provincia = nombre) %>% 
+  mutate(provincia = recode(provincia,
+                         "Ciudad Autónoma de Buenos Aires" = "Ciudad Autónoma de Bs. As." ,
+                         "Tierra del Fuego, Antártida e Islas del Atlántico Sur" = "Tierra del Fuego"))
+pais$provincia <- as.character(pais$provincia)
+
+#unirlo con la tasa de femicidios
+pais_femicidios <- pais %>% 
+  left_join(xprovincia2017)
+
+#Mapa femicidios
+mapa.femicidios <- ggplot()+
+  geom_sf(data = pais_femicidios, aes(fill = tasa_femicidios))+
+  coord_sf(xlim = c(-52, -74), ylim = c(-20, -56), expand = FALSE)+ #sacar la Antartida
+  labs(title = "Femicidios", fill = "tasa")+
+  scale_fill_distiller( direction = 1)+
+  theme_void()
+mapa.femicidios + labs(title = "Tasa de Femicidios por Provincia")
+```
+
+Lamentablemente, la base de femicidios no tiene datos para La Pampa y Río Negro.
+
+## 2. Las variables independientes
+
+Ahora vamos a agregar las variables que nos permitan armar una ecuación para analizar si la tasa de femicidios está en relación con ellas. Voy a tomar en cuenta tres variables: (1) Cantidad de votos en el Senado contra el proyecto de ley de legalización del aborto por provincia, (2) Implementación o no del Protocolo de ILE, y (3) porcentaje de personas con Necesidades Básicas Insatisfechas (NBI) por provincia. 
+
+### a. Voto en contra de la legalización del Aborto
+
+Durante 2018 se produjo el debate parlamentario del proyecto que establece la legalización del aborto. Obtuvo media sanción en la Cámara de Diputados el 13 de junio de 2018, con 129 votos a favor y 124 en contra (1 abstención), luego de la realización de numerosas audiencias públicas para escuchar a la sociedad civil civil^[Todas las exposiciones están disponibles [en este link](https://www.youtube.com/channel/UCYuy9MOr9fesWdWkEN1fpFg/videos?view=0&sort=dd&shelf_id=1).]. El 8 de agosto fue discutido en el Senado, luego también de otras audiencias públicas, pero el proyecto fue finalmente rechazado 38 votos en contra a 31 a favor (2 abstenciones y 1 ausente).
+
+Como en el Senado cada provincia tiene 3 bancas (2 por la mayoría y 1 por la primera minoría), podemos establecer un índice de voto negativo, sumando cada voto en contra del proyecto de ley. Si los tres senadores de la provincia votaron en contra, la provincia obtendrá un 3 en el voto_no. Si ninguno vota en contra, tendrá un 0 en el índice. Con los datos de [La Nacion](https://www.lanacion.com.ar/politica/uno-por-uno-como-se-perfilan-los-votos-de-los-senadores-por-la-legalizacion-del-aborto-nid2149867) podemos armar el siguiente gráfico:
+
+```{r, warning=FALSE, message=FALSE}
+# datos voto en el senado
+senado <- tribble(
+  ~provincia, ~voto_no,
+  "Ciudad Autónoma de Bs. As.",	2,
+  "Buenos Aires",	1,
+  "Catamarca"	,2,
+  "Chaco",  1,
+  "Chubut",	0,
+  "Córdoba",	0,
+  "Corrientes",	2,
+  "Entre Ríos",	1,
+  "Formosa",	2,
+  "Jujuy",	3,
+  "La Pampa",	1,
+  "La Rioja",	3,
+  "Mendoza",	1,
+  "Misiones",	2,
+  "Neuquén",	0,
+  "Río Negro",	1,
+  "Salta",	3,
+  "San Juan",	3,
+  "San Luis",	2,
+  "Santa Cruz",	1,
+  "Santa Fe",	1,
+  "Santiago del Estero",	3,
+  "Tierra del Fuego",	1,
+  "Tucumán",	2)
+
+# Grafico
+ggplot(data = senado, aes(x = provincia, y  = voto_no))+
+  geom_col (aes(x = reorder(provincia, voto_no), fill = voto_no), col = "grey20")+
+  geom_text(aes(label = voto_no), nudge_y = 0.09, size = 3)+
+  labs(title = "Grafico 2. Votos negativos al proyecto de legalización del aborto",
+       subtitle = "Por Provincia, año 2017", x="", y ="Votos negativos")+
+  coord_flip()+
+  theme_bw()
+```
+
+O sino como un mapa:
+
+```{r, message=FALSE}
+pais_femicidios_senado <- pais_femicidios %>% 
+  left_join(senado)
+pais_femicidios_senado$voto_no <- factor(pais_femicidios_senado$voto_no)
+
+mapa_senado <- ggplot()+
+  geom_sf(data = pais_femicidios_senado, aes(fill = voto_no))+
+  coord_sf(xlim = c(-52, -74), ylim = c(-20, -56), expand = FALSE)+
+  labs(title = "Voto negativo")+
+  scale_fill_manual(values = paletaAzul)+
+  theme_void()
+mapa_senado + labs (title= "Voto Negativo al proyecto de Aborto")
+```
+
+### b. Adhesión al protocolo de Interrupción Legal del Embarazo
+
+En el Código Penal actual existen dos supuestos donde el aborto es legal: cuando corre peligro la salud de la persona gestante, y cuando el embarazo es consecuencia de una violación (art. 86 del Cód. Penal). En virtud de la reticencia de los servicios de salud de practicar abortos no punibles, la Corte Suprema, en el Fallo "F.A.L" del 13 de marzo de 2012 estableció cómo debería actuarse frente a estos casos, y estableció en cabeza de los Poderes Ejecutivos tanto de la Nación como de las Provincias la obligación de establecer protocolos de atención de estos casos de interrupción legal del embarazo.
+
+El Ministerio de Salud de la Nación dictó un protocolo para la atención integral de las personas con derecho a la interrupción legal del embarazo, que es el Protocolo ILE Nacional, que recoge las directivas de la Corte Suprema del precedente FAL. Sin embargo, al ser la salud una materia reservada a las provincias, cada jurisdicción debía dictar su propio protocolo o adherir al nacional. Lamentablemente, en las provincias donde se dictó su propio protocolo, este es más restrictivo que el nacional. Según los datos que brindó el [Ministro de Salud](https://drive.google.com/file/d/1-j3PzujjIbnTWJ7N-CAQfFr6spMMnFG_/view?ts=5b688199) en la discusión sobre el aborto  puede clasifircase a las provincias del siguiente modo: 
+
+- Aquellas que adhirieron al protocolo nacional = 0
+- Aquellas que no adhirieron, pero que aplican el protocolo nacional = 1
+- Aquellas que dictaron su propio protocolo mas restrictivo = 2
+- Aquellas que no dictaron protocolo propio ni aplican el nacional = 3
+
+Con los datos disponibles armamos el siguiente gráfico:
+
+```{r, message=FALSE}
+
+#Datos Protocolo ILE
+
+protocolo <- tribble(
+  ~provincia, ~protocolo_no,
+  "Ciudad Autónoma de Bs. As.",	2,
+  "Buenos Aires",	2,
+  "Catamarca"	,2,
+  "Chaco",  0,
+  "Chubut",	2,
+  "Córdoba",	3,
+  "Corrientes",	3,
+  "Entre Ríos",	0,
+  "Formosa",	1,
+  "Jujuy",	0,
+  "La Pampa",	0,
+  "La Rioja",	0,
+  "Mendoza",	1,
+  "Misiones",	0,
+  "Neuquén",	2,
+  "Río Negro",	2,
+  "Salta",	0,
+  "San Juan",	1,
+  "San Luis",	0,
+  "Santa Cruz",	0,
+  "Santa Fe",	0,
+  "Santiago del Estero",	3,
+  "Tierra del Fuego",	0,
+  "Tucumán",	3)
+
+#Grafico
+ggplot(data = protocolo, aes(x = provincia, y  = protocolo_no))+
+  geom_col (aes(x = reorder(provincia, protocolo_no), fill = protocolo_no), col = "grey20")+
+  geom_text(aes(label = protocolo_no), nudge_y = 0.09, size = 3)+
+  labs(title = "Grafico 3. protocolo_no de no adhesión al Protocolo ILE",
+       subtitle = "Por Provincia, año 2017", x="", y ="protocolo_no protocolo ILE")+
+  coord_flip()+
+  theme_bw()
+```
+
+O hacer un mapa:
+
+```{r, message=FALSE}
+pais_femicidios_senado_protocolo <- pais_femicidios_senado %>% 
+  left_join(protocolo)
+pais_femicidios_senado_protocolo$protocolo_no <- factor(pais_femicidios_senado_protocolo$protocolo_no)
+
+mapa_protocolo <- ggplot()+
+  geom_sf(data = pais_femicidios_senado_protocolo, aes(fill = protocolo_no))+
+  coord_sf(xlim = c(-52, -74), ylim = c(-20, -56), expand = FALSE)+
+  labs(title = "Protocolo")+
+  scale_fill_manual(values = paletaAzul)+
+  theme_void()
+mapa_protocolo + labs(title = "Índice de no adhesión al protocolo ILE")
+```
+
+### c. Necesidades básicas insatisfechas
+
+La tercera variable explicativa podría ser la del porcentaje de hogares con Necesidades Básicas Insatisfechas (NBI) en la provincia. Si bien está probado que la violencia machista es similar en las distintas clases sociales, quizás una provincia con mayor pobreza implique que el Estado esté más ausente, y por lo tanto, la resolución de conflictos puede ser mayormente de modos violentos. De cualquier modo, quizás pueda ser significativa la variación en los femicidios de acuerdo a la variación en el índice NBI. Será relevante medirlo.
+
+De la página del [INDEC](https://www.indec.gob.ar/bajarCuadroEstadistico.asp?idc=40CDAA5CA78F042F2AE6766F111B0D01005359C4EBBBCEE2CB593E32B085CE4C2BE0CA9CBF380E8E) podemos descargar los valores y ajustarlos a una tabla de valores separados por coma.
+
+```{r, message=FALSE}
+#datos NBI
+
+nbi <- read.csv("/Users/demian/Documents/Cursos/Big Data e IT/Modulo 2. DS/examen/nbi.csv",header = FALSE, stringsAsFactors = FALSE) %>% 
+  rename("provincia" = V1, "porc_nbi" = V2)
+
+nbi <- nbi %>% 
+  mutate(provincia = recode(provincia,
+                            "Neuquen" = "Neuquén", 
+                            "Ciudad Autónoma de Buenos Aires" = "Ciudad Autónoma de Bs. As.",
+                            "Tierra del Fuego, Antártida e Islas del Atlántico Sur" = "Tierra del Fuego",
+                            "Entre Ríos " = "Entre Ríos"))
+nbi$porc_nbi <- parse_number(nbi$porc_nbi)/10
+# Grafico
+
+ggplot(data = nbi, aes(x = provincia, y  = porc_nbi))+
+  geom_col (aes(x = reorder(provincia, porc_nbi)), fill = "steelblue", col = "grey20")+
+  geom_text(aes(label = paste0(porc_nbi, "%")), nudge_y = 1, size = 3)+
+  labs(title = "Grafico 4. Porcentaje de personas NBI",
+       subtitle = "Por Provincia, año 2017", x="", y ="Porcentaje NBI")+
+  coord_flip()+
+  theme_bw()
+```
+O hacer un mapa:
+
+```{r, message=FALSE}
+pais_femicidios_senado_protocolo_nbi <- pais_femicidios_senado_protocolo %>% 
+  left_join(nbi)
+
+mapa_nbi <- ggplot()+
+  geom_sf(data = pais_femicidios_senado_protocolo_nbi, aes(fill = porc_nbi))+
+  coord_sf(xlim = c(-52, -74), ylim = c(-20, -56), expand = FALSE)+
+  labs(title = "NBI")+
+  scale_fill_distiller(direction = 1)+
+  theme_void()
+mapa_nbi + labs(title = "Porcentaje población con NBI")
+
+```
+
+## 3. El análisis de regresión
+
+En esta sección voy a analizar si existe alguna relación estadísticamente significativa entre la tasa de femicidios y las variantes independientes que fui calculando.
+Antes que ello, podemos ver los mapas uno al lado del otro a ver si visualmente existe algún tipo de relación.
+
+```{r, message=FALSE}
+grid.arrange(mapa.femicidios, mapa_senado, mapa_protocolo, mapa_nbi, nrow = 1)
+```
+
+Y entonces realizo el cálculo de las regresiones, primero todas las variables juntas y luego cada en variable en particular.
+
+```{r, message=FALSE}
+#convierto los factores a números
+pais_femicidios_senado_protocolo_nbi$voto_no <-as.numeric(as.character(pais_femicidios_senado_protocolo_nbi$voto_no))
+pais_femicidios_senado_protocolo_nbi$protocolo_no <-as.numeric(as.character(pais_femicidios_senado_protocolo_nbi$protocolo_no))
+
+# y calculo cuatro regresiones
+#todas las variables
+regresion1 <- lm(tasa_femicidios ~ voto_no + protocolo_no + porc_nbi, 
+                data = pais_femicidios_senado_protocolo_nbi )
+#cada variable independiente sola
+regresion2 <- lm(tasa_femicidios ~ protocolo_no, data = pais_femicidios_senado_protocolo_nbi)
+
+regresion3 <- lm(tasa_femicidios ~ voto_no, data = pais_femicidios_senado_protocolo_nbi)
+
+regresion4 <- lm(tasa_femicidios  ~ porc_nbi, data = pais_femicidios_senado_protocolo_nbi)
+```
+
+Obteniendo los siguientes resultados
+
+```{r}
+tab_model(regresion1)
+```
+De acuerdo a esta regresión no hay relación estadísticamente significativa entre la tasa de femicidios y el voto negativo del proyecto de ley de legalización del aborto, junto con la no adopción de un protocolo amplio de ILE, y la tasa de personas con NBI en la provincia.
+
+Para ver si individualmente alguna variable tiene relación con la variable dependiente haré regresiones lineales con cada una de las variables.
+
+```{r}
+tab_model(regresion2)
+tab_model(regresion3)
+tab_model(regresion4)
+```
+
+Podemos ver que el único resultado significativo se da en la regresión entre la tasa de femicidios y el porcentaje de personas con NBI de la provincia. Al seleccionar esta variable justifiqué su inclusión en que cuanto mayor era la tasa de personas con NBI podía inferirse un estado más ausente y ello llevaba a una mayor cantidad de soluciones violentas a los conflictos y una mayor falta de reacción del Estado para prevenirlas.
+
+Esta última conclusión pudo verificarse empíricamente con los datos oficiales disponibles. Y si bien en este trabajo no pudo establecerse una vinculación entre la tasa de femicidios y posiciones restrictivas de los derechos de las mujeres, sí se la pudo vincular con la tasa de NBI que implica la ausencia del Estado. Es por ello que si el Estado quiere reducir la cantidad de femicidios tendrá que asegurar una mayor presencia y soluciones más eficaces que también reduzca la cantidad de personas con NBI.
+
+
+
