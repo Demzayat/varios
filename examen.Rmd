@@ -374,19 +374,25 @@ regresion4 <- lm(tasa_femicidios  ~ porc_nbi, data = pais_femicidios_senado_prot
 ```
 
 Obteniendo los siguientes resultados
-
+<div align="center">
 ```{r}
 tab_model(regresion1)
 ```
+</div>
+
 De acuerdo a esta regresión no hay relación estadísticamente significativa entre la tasa de femicidios y el voto negativo del proyecto de ley de legalización del aborto, junto con la no adopción de un protocolo amplio de ILE, y la tasa de personas con NBI en la provincia.
 
 Para ver si individualmente alguna variable tiene relación con la variable dependiente haré regresiones lineales con cada una de las variables.
 
+<div align = "center">
 ```{r}
 tab_model(regresion2)
+
 tab_model(regresion3)
+
 tab_model(regresion4)
 ```
+</div>
 
 ## Conclusiones
 
@@ -396,5 +402,5 @@ Esta última conclusión pudo verificarse empíricamente con los datos oficiales
 
 Podríamos confirmar este resultado con mayores investigaciones sobre la dependencia de la tasa de femicidio con otras variables que impliquen también la ausencia del Estado. Cantidad de escuelas, hospitales o centros de salud, programas sociales, etc. Asimismo, con la presencia o no de políticas de prevención de femicidios, como pueden ser oficinas judiciales de violencia de género, refugios para mujeres víctimas de violencia, o campañas de concientización de la violencia de género.
 
-También, en un futuro, con la aprobación de la ley que legalice el aborto, volver a analizar la cantidad de femicidios antes y después de la aprobación de esta ley. Por ahora, con los datos existentes al día de hoy, esto no se pudo confirmar. Quizás pueda hacérselo en futuras investigaciones.
+También, en un futuro, con la aprobación de la ley que legalice el aborto, volver a analizar la cantidad de femicidios antes y después de la aprobación de esta ley. Por ahora, con los datos existentes, esto no se pudo confirmar. Quizás pueda hacérselo en futuras investigaciones.
 
