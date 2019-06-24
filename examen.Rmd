@@ -4,8 +4,6 @@ title: ¿Existe relación entre los femicidios, el aborto y la tasa de personas 
 author: "Demian Zayat"
 date: "24 de junio de 2019"
 output:
-  pdf_document:
-    toc: yes
   html_document:
     depth: 4
     df_print: paged
@@ -62,6 +60,8 @@ library(sjlabelled)
 
 paletaPurple = c("#f2f0f7", "#cbc9e2", "#9e9ac8", "#6a51a3")
 paletaAzul <- c("#eff3ff", "#bdd7e7", "#6baed6", "#2171b5")
+
+knitr::opts_chunk$set(fig.align = "center", echo = FALSE) #fijar opciones globales de chunks
 ```
 
 ```{r tasa_femicidio, message=FALSE}
@@ -278,7 +278,7 @@ protocolo <- tribble(
 ggplot(data = protocolo, aes(x = provincia, y  = protocolo_no))+
   geom_col (aes(x = reorder(provincia, protocolo_no), fill = protocolo_no), col = "grey20")+
   geom_text(aes(label = protocolo_no), nudge_y = 0.09, size = 3)+
-  labs(title = "Grafico 3. protocolo_no de no adhesión al Protocolo ILE",
+  labs(title = "Grafico 3. Índice de no adhesión al Protocolo ILE",
        subtitle = "Por Provincia, año 2017", x="", y ="protocolo_no protocolo ILE")+
   coord_flip()+
   theme_bw()
@@ -294,7 +294,7 @@ pais_femicidios_senado_protocolo$protocolo_no <- factor(pais_femicidios_senado_p
 mapa_protocolo <- ggplot()+
   geom_sf(data = pais_femicidios_senado_protocolo, aes(fill = protocolo_no))+
   coord_sf(xlim = c(-52, -74), ylim = c(-20, -56), expand = FALSE)+
-  labs(title = "Protocolo")+
+  labs(title = "Protocolo", fill = "no prot")+
   scale_fill_manual(values = paletaAzul)+
   theme_void()
 mapa_protocolo + labs(title = "Índice de no adhesión al protocolo ILE")
@@ -388,9 +388,13 @@ tab_model(regresion3)
 tab_model(regresion4)
 ```
 
+## Conclusiones
+
 Podemos ver que el único resultado significativo se da en la regresión entre la tasa de femicidios y el porcentaje de personas con NBI de la provincia. Al seleccionar esta variable justifiqué su inclusión en que cuanto mayor era la tasa de personas con NBI podía inferirse un estado más ausente y ello llevaba a una mayor cantidad de soluciones violentas a los conflictos y una mayor falta de reacción del Estado para prevenirlas.
 
 Esta última conclusión pudo verificarse empíricamente con los datos oficiales disponibles. Y si bien en este trabajo no pudo establecerse una vinculación entre la tasa de femicidios y posiciones restrictivas de los derechos de las mujeres, sí se la pudo vincular con la tasa de NBI que implica la ausencia del Estado. Es por ello que si el Estado quiere reducir la cantidad de femicidios tendrá que asegurar una mayor presencia y soluciones más eficaces que también reduzca la cantidad de personas con NBI.
 
+Podríamos confirmar este resultado con mayores investigaciones sobre la dependencia de la tasa de femicidio con otras variables que impliquen también la ausencia del Estado. Cantidad de escuelas, hospitales o centros de salud, programas sociales, etc. Asimismo, con la presencia o no de políticas de prevención de femicidios, como pueden ser oficinas judiciales de violencia de género, refugios para mujeres víctimas de violencia, o campañas de concientización de la violencia de género.
 
+También, en un futuro, con la aprobación de la ley que legalice el aborto, volver a analizar la cantidad de femicidios antes y después de la aprobación de esta ley. Por ahora, con los datos existentes al día de hoy, esto no se pudo confirmar. Quizás pueda hacérselo en futuras investigaciones.
 
