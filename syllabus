@@ -1,0 +1,184 @@
+---
+title: "Derecho Antidiscriminatorio y Litigio Estratégico"
+author: "Demián Zayat"
+date: "Segundo Cuatrimestre 2019"
+output:
+  html_document:
+    df_print: paged
+  pdf_document:
+    fig_caption: yes
+    keep_tex: no
+    latex_engine: pdflatex
+fontsize: 11pt
+geometry: margin=1in
+header-includes: \linespread{1.05}
+fontfamily: mathpazo
+email: demian.zayat@gmail.com
+---
+
+Universidad de Palermo
+
+Escuela de Posgrado
+
+demian.zayat@gmail.com
+```{r, include=FALSE}
+martes <- as.Date ("2019-08-12")
+advdate <- function(obj, adv) {
+ tmon <- obj + 7*(adv-1)
+ tmon <- format(tmon, format="%d/%m")
+ zadv <- sprintf("%02d", adv)
+ tmp <- paste("Clase ",zadv,sep='',", ", tmon)
+ return(tmp)
+}
+```
+
+# Presentación
+
+En este curso se analizarán las diversas aristas del derecho a la igualdad, para intentar desarrollar, desde la teoría y la jurisprudencia, un cuerpo de doctrina que vendría a sistematizar, al menos de forma incipiente, un derecho antidiscriminatorio en nuestro país.
+
+Para ello, luego de discutir sobre las diversas concepciones de la igualdad, y alguna justificación democrática de este principio, entraríamos a analizar los diversos estándares y doctrinas jurisprudenciales sobre el derecho a la igualdad. Se partirá en primer lugar la justificación clásica de “igualdad en iguales circunstancias” para cuestionarla desde una teoría integral.
+
+Luego analizaremos la doctrina de la igualdad como no discriminación y la razonabilidad aplicada al análisis de los casos. Asimismo, la doctrina de la igualdad como no sometimiento, tanto en el análisis de normas con las categorías sospechosas, como en los hechos, en tanto trato desigual o impacto desproporcionado. Discutiremos las diferencias entre si la discriminación proviene del Estado o de un particular, y si la afectación es de un grupo colectivamente o individual.
+
+Este será un curso orientado hacia el operador jurídico, tanto jueces como abogados litigantes. Eso será especialmente tenido en cuenta al momento de discutir los remedios o las estrategias jurídicas que pueden adoptarse para promover la vigencia del derecho a la igualdad, sobre todo en casos estructurales. Allí pasaremos revista a distintos casos estructurales para discutir sus estrategias y ver las opciones disponibles.
+
+# Objetivo
+
+El objetivo del curso será discutir sobre las distintas perspectivas del derecho a la igualdad, y poder desarrollar una sistematización coherente para encuadrar los distintos supuestos que puedan presentarse. Para ello discutiremos sobre la diferenciación entre derecho a la igualdad como no discriminación y como no sometimiento. Analizaremos los diversos estándares: razonabilidad, categoría sospechosa, trato desigual e impacto desproporcionado.
+
+En la segunda parte, analizaremos las discusiones que puede suscitar la protección judicial de este derecho, especialmente cuando se trata de grupos discriminados de modo estructural. Partiendo de una discusión teórica sobre el alcance y la justificación de este principio, discutiremos las distintas estrategias utilizadas por algunos movimientos sociales que utilizaron a los tribunales para provocar cambios estructurales en la Administración. Previamente, discutiremos este nuevo papel del poder judicial en este tipo de litigios.
+
+# Metodología
+
+Será un curso de discusión de la bibliografía y de los fallos de los tribunales. La idea es discutir cada una de las teorías y ver sus implicancias prácticas. Los casos a analizar abarcan diversos tipos de discriminación que fueron llegando (o no) a los tribunales, y durante las clases analizaremos críticamente lo que resolvieron los jueces.
+
+Asimismo, en la última parte, tanto de los remedios como en el litigio estratégico, pensaremos en común qué decisiones tuvieron que tomar los litigantes, y qué esperaban de los jueces. A su vez, cómo lo resolvieron los jueces y qué opciones hubieran tenido. Para ello, les alumnes deberán tener leído por adelantado el material para cada clase.
+
+**El examen será escrito, presencial, al final del curso**
+
+_Parte de la bibliografía está en ingles._
+
+# Programa Analítico
+
+### **Unidad 1. Alcance y fundamentos del derecho a la igualdad**
+
+###  `r advdate(martes, 1)`. Presentación
+
+La igualdad como pilar del sistema democrático. Cómo debe lidiar una sociedad justa con el hecho de la desigualdad. ¿Qué habría que igualar? Igualdad de puntos de partida vs. Igualdad de situación.
+
+###  `r advdate(martes, 3)`. Igualdad como imparcialidad
+
+- Rawls, John, Teoría de la Justicia, Fondo de Cultura Económica, México, 1995. Capítulo 1, “Justicia como Imparcialidad”, numerales 1 a 4. Capítulo 2, “Los principios de la Justicia”, numerales 10, 11, 15, 16 y 17.
+
+- Queralt Lange, Jahel, Igualdad, suerte y justicia, Marcial Pons, Madrid, 2014, caps 2 y 3.
+
+###  `r advdate(martes, 4)`. Igualdad de recursos
+
+- Dworkin, Igualdad de Recursos, Virtud soberana, cap 2
+
+- Queralt Lange, Jahel, Igualdad, suerte y Justicia, Marcial Pons, 2014, Cap. 4 y 5
+
+###  `r advdate(martes, 5)`. Igualdad relacional
+
+- Elizabeth Anderson, “What’s the point of Equality?”, Ethics 109, January 1999
+
+- Costa, Malena, Feminismos Jurídicos, Ed. Didot, Buenos Aires, 2016, capítulo 5 “Feminismos jurídicos y nociones de igualdad”
+
+- Zayat, Demian “Pobres merecedores y no merecedores”.
+
+Unidad 2. Igualdad como no discriminación
+Igualdad como igualdad en iguales circunstancias. ¿Qué significa ello? Razonabilidad como no establecimiento de requisitos irrazonables. Ajuste de medios a fines. Análisis de estos fines y de las justificaciones. Igualdad individual vs. Igualdad de grupos.
+
+Clase 5. Razonabilidad.
+
+CSJN, Caille, Arenzon,
+
+Fiss, “Groups and the equal protection clause” Philosophy and Public Affairs (1976). Parte 1 y 2.
+
+Roberto Saba, Mas allá de la igualdad formal ante la ley, Siglo XXI Editores, 2016, Cap 1 “Desigualdad estructural”
+
+CSJN, Reyes Aguilera
+
+Gargarella, Cómo no debería pensarse el derecho a la igualdad. Un análisis de las opiniones disidentes en el fallo Reyes Aguilera
+
+Comisión IDH, informe 73/00, caso 11.784 Marcelino Hanriquez v. Argentina.
+
+Unidad 3. Igualdad como no sometimiento
+Diferencias entre grupos, mayoritarios vs. históricamente oprimidos. Qué hacer en casos de afectación a estos últimos. Análisis colectivo. Análisis de la discriminación en las normas o en los hechos, de particulares o del Estado, a través de políticas discriminatorias expresas o implícitas.
+Clase 6 y 7. Categorías sospechosas.
+
+¿Qué son las categorías sospechosas? ¿Es necesaria una norma formal que establezca estas categorías? ¿Cuáles son?
+
+CSJN, Repetto, Hooft, Gottschau, Gonzalez de Delgado
+
+Roberto Saba, Mas allá de la igualdad formal ante la ley, Siglo XXI Editores, 2016, Cap 2 “Igualdad, clases y clasificaciones. ¿Qué es lo sospechosos de las categorías sospechosas?”
+
+USSC, Bakke, Grutter v. Bollinger, Adarand Constructors
+
+Corte IDH “Atala Riffo c. Chile”
+
+CSJN, Z.J.J
+
+Clase 8 y 9. Trato desigual
+
+Teoría del trato desigual. Diferencia de trato de los particulares y del Estado. ¿Es necesario probar la intención de discriminar? ¿Es necesario que quien discrimina tenga odio irracional contra un grupo? Teoría de la discriminacion racional, estadística.
+
+CSJN, Pellicori, Sisnero
+
+Camara Civil, Freddo
+
+USSC, “Mc Donnel Douglas Coorp v. Green”, “Teamsters”, “Hazelwood v. United States”, “Wal-Mart Stores v. Dukes”, “EEOC vs Abercrombie & Fitch”
+
+Ian Ayres, “Venta de autos justa”, en Zayat (comp) La Discriminación en el mercado. Ian ayres y los estudios empíricos sobre desigualdad. Universidad de Palermo, 2013.
+
+Clase 10 y 11. Impacto desproporcionado
+
+Teoría del impacto desproporcionado. Una política (pública o particular) que tiene un impacto desigual en diversos grupos. ¿Qué habrá que probar en este caso?
+
+Ayres, Ian, “Poder de mercado y desigualdad”, en Zayat (comp) La Discriminación en el mercado. Ian ayres y los estudios empíricos sobre desigualdad. Universidad de Palermo, 2013.
+
+USSC, Griggs v. Duke Power
+
+Fitzpatrick vs. City of Atlanta
+
+TSJ CABA, Bara Sakho
+
+Corte IDH Yathama vs Nicaragua
+
+Unidad 4. Remedios
+Qué remedios se pueden adoptar frente a los casos de discriminación. Qué sucede si la discriminación proviene de un particular. Qué opciones tiene el discriminado. ¿Es lo mismo en los casos colectivos o estructurales?
+
+Clase 12 y 13.
+
+CSJN, Alvarez c. Cencosud,
+
+CNCiv, sala J, sent. del 11/10/2006, “Hertzriken, Luciano y otro c. Sanfuentes Fernández, Magdalena s/Danos y perjuicios”.
+
+SCBA, Machinandiera Hernandez, Nicolas c/ Telefonica”
+
+Roberto Saba, Mas allá de la igualdad formal ante la ley, Siglo XXI Editores, 2016, Cap 3 “Igualdad de trato entre particulares”.
+
+Convención sobre los derechos de las Personas con Discapacidad – Accomodations
+
+Caso de Emiliano Naranjo. Fallo CSJN, Dictamen PGN, Fallo Sala II Camara Federal de San Martín
+
+Corte Constitucional de Colombia, caso Paloquemao. T-553/11.
+
+Unidad 5. Litigio Estrategico
+¿Qué busca un litigante al presentar un litigio estratégico? ¿Qué debates debe adoptar de modo previo?¿Qué puede hacer un juez comprometido con la mejor solución al caso? ¿Qué relación puede crearse con la administración demandada?
+
+Clase 14 y 15
+
+Cómo se configura un litigio de reforma estructural, sus presupuestos y objetivos. Dificultades. Comando y Control vs. Experimentalismo
+
+Fiss, Owen, El derecho como razón pública, Marcial Pons, Madrid, 2007, Cap. 1 “Las Formas de la Justicia”.
+
+Sabel y Simon, Destabilization Rights: How Public Law Litigation Succeeds, 117 Harv. L. Rev. 1015.
+
+Paola Bergallo, “Justicia y experimentalismo: la función remedial del poder judicial en el litigio de derecho público en Argentina” (2005), SELA (Seminario en Latinoamérica de Teoría Constitucional y Política) Papers. Paper 45.
+
+Cesar Rodriguez Garavito y Diana Rodriguez, Juicio a la Exclusión, Siglo XXI editores, 2015, caps 1 y 8.
+
+Caso Mendoza (Caso Riachuelo- Argentina)
+
+Caso Verbitsky (Carceles de la Provincia de Buenos Aires - Argentina)
