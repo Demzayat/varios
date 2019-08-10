@@ -8,26 +8,20 @@ output:
   pdf_document:
     fig_caption: yes
     keep_tex: no
-    latex_engine: pdflatex
+    template: template.tex
+email: demian.zayat@gmail.com
+fontfamily: mathpazo
 fontsize: 11pt
 geometry: margin=1in
 header-includes: \linespread{1.05}
-fontfamily: mathpazo
-email: demian.zayat@gmail.com
 ---
-
-Universidad de Palermo
-
-Escuela de Posgrado
-
-demian.zayat@gmail.com
 ```{r, include=FALSE}
-martes <- as.Date ("2019-08-12")
+lunes <- as.Date ("2019-08-12")
 advdate <- function(obj, adv) {
  tmon <- obj + 7*(adv-1)
  tmon <- format(tmon, format="%d/%m")
  zadv <- sprintf("%02d", adv)
- tmp <- paste("Clase ",zadv,sep='',", ", tmon)
+ tmp <- paste("Semana ",zadv,sep='',", ", tmon)
  return(tmp)
 }
 ```
@@ -60,125 +54,139 @@ _Parte de la bibliografía está en ingles._
 
 # Programa Analítico
 
-### **Unidad 1. Alcance y fundamentos del derecho a la igualdad**
+## **_Unidad 1. Alcance y fundamentos del derecho a la igualdad_**
 
-###  `r advdate(martes, 1)`. Presentación
+### `r advdate(lunes, 1)`. Presentación
 
 La igualdad como pilar del sistema democrático. Cómo debe lidiar una sociedad justa con el hecho de la desigualdad. ¿Qué habría que igualar? Igualdad de puntos de partida vs. Igualdad de situación.
 
-###  `r advdate(martes, 3)`. Igualdad como imparcialidad
+### `r advdate(lunes, 3)`. Igualdad como imparcialidad
 
 - Rawls, John, Teoría de la Justicia, Fondo de Cultura Económica, México, 1995. Capítulo 1, “Justicia como Imparcialidad”, numerales 1 a 4. Capítulo 2, “Los principios de la Justicia”, numerales 10, 11, 15, 16 y 17.
 
 - Queralt Lange, Jahel, Igualdad, suerte y justicia, Marcial Pons, Madrid, 2014, caps 2 y 3.
 
-###  `r advdate(martes, 4)`. Igualdad de recursos
+### `r advdate(lunes, 4)`. Igualdad de recursos
 
 - Dworkin, Igualdad de Recursos, Virtud soberana, cap 2
 
 - Queralt Lange, Jahel, Igualdad, suerte y Justicia, Marcial Pons, 2014, Cap. 4 y 5
 
-###  `r advdate(martes, 5)`. Igualdad relacional
-
-- Elizabeth Anderson, “What’s the point of Equality?”, Ethics 109, January 1999
-
-- Costa, Malena, Feminismos Jurídicos, Ed. Didot, Buenos Aires, 2016, capítulo 5 “Feminismos jurídicos y nociones de igualdad”
+### `r advdate(lunes, 5)`. Igualdad relacional
 
 - Zayat, Demian “Pobres merecedores y no merecedores”.
+- Elizabeth Anderson, “What’s the point of Equality?”, Ethics 109, January 1999
+- Costa, Malena, Feminismos Jurídicos, Ed. Didot, Buenos Aires, 2016, capítulo 5 “Feminismos jurídicos y nociones de igualdad”
+- Angela Davis, "Mujeres, raza y clase", capítulo 1, Ed. Akal.
 
-Unidad 2. Igualdad como no discriminación
+
+## **_Unidad 2. Igualdad como no discriminación_**
+
 Igualdad como igualdad en iguales circunstancias. ¿Qué significa ello? Razonabilidad como no establecimiento de requisitos irrazonables. Ajuste de medios a fines. Análisis de estos fines y de las justificaciones. Igualdad individual vs. Igualdad de grupos.
 
-Clase 5. Razonabilidad.
+### `r advdate(lunes, 6)`. Razonabilidad.
 
-CSJN, Caille, Arenzon,
+- CSJN, Caille. 
+- CSJN, Arenzon.
 
-Fiss, “Groups and the equal protection clause” Philosophy and Public Affairs (1976). Parte 1 y 2.
+- Fiss, “Groups and the equal protection clause” Philosophy and Public Affairs (1976). Parte 1 y 2.
 
-Roberto Saba, Mas allá de la igualdad formal ante la ley, Siglo XXI Editores, 2016, Cap 1 “Desigualdad estructural”
+- Roberto Saba, Mas allá de la igualdad formal ante la ley, Siglo XXI Editores, 2016, Cap 1 “Desigualdad estructural”
 
-CSJN, Reyes Aguilera
+- CSJN, Reyes Aguilera
 
-Gargarella, Cómo no debería pensarse el derecho a la igualdad. Un análisis de las opiniones disidentes en el fallo Reyes Aguilera
+- Gargarella, Cómo no debería pensarse el derecho a la igualdad. Un análisis de las opiniones disidentes en el fallo Reyes Aguilera
 
-Comisión IDH, informe 73/00, caso 11.784 Marcelino Hanriquez v. Argentina.
+- Comisión IDH, informe 73/00, caso 11.784 Marcelino Hanriquez v. Argentina.
 
-Unidad 3. Igualdad como no sometimiento
+## **_Unidad 3. Igualdad como no sometimiento_**
+
 Diferencias entre grupos, mayoritarios vs. históricamente oprimidos. Qué hacer en casos de afectación a estos últimos. Análisis colectivo. Análisis de la discriminación en las normas o en los hechos, de particulares o del Estado, a través de políticas discriminatorias expresas o implícitas.
-Clase 6 y 7. Categorías sospechosas.
+
+### `r advdate(lunes, 7)` y `r advdate(lunes, 8)`. Categorías sospechosas.
 
 ¿Qué son las categorías sospechosas? ¿Es necesaria una norma formal que establezca estas categorías? ¿Cuáles son?
 
-CSJN, Repetto, Hooft, Gottschau, Gonzalez de Delgado
+- CSJN, Repetto, 
+- CSJN, Hooft, 
+- CSJN, Gottschau,
+- CSJN, Gonzalez de Delgado
 
-Roberto Saba, Mas allá de la igualdad formal ante la ley, Siglo XXI Editores, 2016, Cap 2 “Igualdad, clases y clasificaciones. ¿Qué es lo sospechosos de las categorías sospechosas?”
+- Roberto Saba, Mas allá de la igualdad formal ante la ley, Siglo XXI Editores, 2016, Cap 2 “Igualdad, clases y clasificaciones. ¿Qué es lo sospechosos de las categorías sospechosas?”
 
-USSC, Bakke, Grutter v. Bollinger, Adarand Constructors
+- USSC, Bakke, 
+- USSC, Grutter v. Bollinger, 
+- USSC, Adarand Constructors (resumen)
 
-Corte IDH “Atala Riffo c. Chile”
+- CSJN, Z.J.J
 
-CSJN, Z.J.J
-
-Clase 8 y 9. Trato desigual
+### `r advdate(lunes, 9)` y `r advdate(lunes, 10)`.  Trato desigual
 
 Teoría del trato desigual. Diferencia de trato de los particulares y del Estado. ¿Es necesario probar la intención de discriminar? ¿Es necesario que quien discrimina tenga odio irracional contra un grupo? Teoría de la discriminacion racional, estadística.
 
-CSJN, Pellicori, Sisnero
+- CSJN, Pellicori
+- CSJN, Sisnero
+- Camara Civil, Freddo
 
-Camara Civil, Freddo
+- USSC, “Mc Donnel Douglas Coorp v. Green”,
+- USSC, “Teamsters”, 
+- USSC, “Hazelwood v. United States”, 
+- USSC, “Wal-Mart Stores v. Dukes”, 
+- USSC, “EEOC vs Abercrombie & Fitch”
 
-USSC, “Mc Donnel Douglas Coorp v. Green”, “Teamsters”, “Hazelwood v. United States”, “Wal-Mart Stores v. Dukes”, “EEOC vs Abercrombie & Fitch”
+- Ian Ayres, “Venta de autos justa”, en Zayat (comp) La Discriminación en el mercado. Ian ayres y los estudios empíricos sobre desigualdad. Universidad de Palermo, 2013.
 
-Ian Ayres, “Venta de autos justa”, en Zayat (comp) La Discriminación en el mercado. Ian ayres y los estudios empíricos sobre desigualdad. Universidad de Palermo, 2013.
-
-Clase 10 y 11. Impacto desproporcionado
+### `r advdate(lunes, 11)` y `r advdate(lunes, 12)`. Impacto desproporcionado
 
 Teoría del impacto desproporcionado. Una política (pública o particular) que tiene un impacto desigual en diversos grupos. ¿Qué habrá que probar en este caso?
 
-Ayres, Ian, “Poder de mercado y desigualdad”, en Zayat (comp) La Discriminación en el mercado. Ian ayres y los estudios empíricos sobre desigualdad. Universidad de Palermo, 2013.
+- Ayres, Ian, “Poder de mercado y desigualdad”, en Zayat (comp) La Discriminación en el mercado. Ian ayres y los estudios empíricos sobre desigualdad. Universidad de Palermo, 2013.
 
-USSC, Griggs v. Duke Power
+- USSC, Griggs v. Duke Power
 
-Fitzpatrick vs. City of Atlanta
+- Fitzpatrick vs. City of Atlanta
 
-TSJ CABA, Bara Sakho
+- TSJ CABA, Bara Sakho
 
-Corte IDH Yathama vs Nicaragua
+- CSJN, Castillo
 
-Unidad 4. Remedios
+
+## **_Unidad 4. Remedios_**
 Qué remedios se pueden adoptar frente a los casos de discriminación. Qué sucede si la discriminación proviene de un particular. Qué opciones tiene el discriminado. ¿Es lo mismo en los casos colectivos o estructurales?
 
-Clase 12 y 13.
+### `r advdate(lunes, 13)` y `r advdate(lunes, 14)`.
 
-CSJN, Alvarez c. Cencosud,
+- CSJN, Alvarez c. Cencosud,
 
-CNCiv, sala J, sent. del 11/10/2006, “Hertzriken, Luciano y otro c. Sanfuentes Fernández, Magdalena s/Danos y perjuicios”.
+- CNCiv, sala J, sent. del 11/10/2006, “Hertzriken, Luciano y otro c. Sanfuentes Fernández, Magdalena s/Danos y perjuicios”.
 
-SCBA, Machinandiera Hernandez, Nicolas c/ Telefonica”
+- SCBA, Machinandiera Hernandez, Nicolas c/ Telefonica”
 
-Roberto Saba, Mas allá de la igualdad formal ante la ley, Siglo XXI Editores, 2016, Cap 3 “Igualdad de trato entre particulares”.
+- Roberto Saba, Mas allá de la igualdad formal ante la ley, Siglo XXI Editores, 2016, Cap 3 “Igualdad de trato entre particulares”.
 
-Convención sobre los derechos de las Personas con Discapacidad – Accomodations
+- Convención sobre los derechos de las Personas con Discapacidad – Accomodations
 
-Caso de Emiliano Naranjo. Fallo CSJN, Dictamen PGN, Fallo Sala II Camara Federal de San Martín
+- Caso de Emiliano Naranjo. Fallo CSJN, Dictamen PGN, Fallo Sala II Camara Federal de San Martín
 
-Corte Constitucional de Colombia, caso Paloquemao. T-553/11.
+- Corte Constitucional de Colombia, caso Paloquemao. T-553/11.
 
-Unidad 5. Litigio Estrategico
+## **_Unidad 5. Litigio Estrategico_**
+
 ¿Qué busca un litigante al presentar un litigio estratégico? ¿Qué debates debe adoptar de modo previo?¿Qué puede hacer un juez comprometido con la mejor solución al caso? ¿Qué relación puede crearse con la administración demandada?
 
-Clase 14 y 15
+### `r advdate(lunes, 15)` y `r advdate(lunes, 16)`.
 
 Cómo se configura un litigio de reforma estructural, sus presupuestos y objetivos. Dificultades. Comando y Control vs. Experimentalismo
 
-Fiss, Owen, El derecho como razón pública, Marcial Pons, Madrid, 2007, Cap. 1 “Las Formas de la Justicia”.
+- Fiss, Owen, El derecho como razón pública, Marcial Pons, Madrid, 2007, Cap. 1 “Las Formas de la Justicia”.
 
-Sabel y Simon, Destabilization Rights: How Public Law Litigation Succeeds, 117 Harv. L. Rev. 1015.
+- Sabel y Simon, Destabilization Rights: How Public Law Litigation Succeeds, 117 Harv. L. Rev. 1015.
 
-Paola Bergallo, “Justicia y experimentalismo: la función remedial del poder judicial en el litigio de derecho público en Argentina” (2005), SELA (Seminario en Latinoamérica de Teoría Constitucional y Política) Papers. Paper 45.
+- Paola Bergallo, “Justicia y experimentalismo: la función remedial del poder judicial en el litigio de derecho público en Argentina” (2005), SELA (Seminario en Latinoamérica de Teoría Constitucional y Política) Papers. Paper 45.
 
-Cesar Rodriguez Garavito y Diana Rodriguez, Juicio a la Exclusión, Siglo XXI editores, 2015, caps 1 y 8.
+- Cesar Rodriguez Garavito y Diana Rodriguez, Juicio a la Exclusión, Siglo XXI editores, 2015, caps 1 y 8.
 
-Caso Mendoza (Caso Riachuelo- Argentina)
+- Caso Mendoza (Caso Riachuelo- Argentina)
 
-Caso Verbitsky (Carceles de la Provincia de Buenos Aires - Argentina)
+- Caso Verbitsky (Carceles de la Provincia de Buenos Aires - Argentina)
+
