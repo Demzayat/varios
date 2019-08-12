@@ -1,0 +1,16 @@
+caba_migrante_voto <- caba_migrante_voto %>%
+  ungroup() %>% 
+  mutate(CODIGO_CATEGORIA = recode(CODIGO_CATEGORIA,
+                                  "000501000000000" = "Jefe de Gob.",
+                                 "000801000000000" = "Diputados Caba",
+                                 "000901001000000" = "Junta Comunal"),
+         CODIGO_AGRUPACION = recode(CODIGO_AGRUPACION,
+                                    "01-187" = "Autodeterminacion y Libertad",
+                                    "01-501" = "FIT",
+                                    "01-502" = "Frente de Todos",
+                                    "01-503" = "Juntos por el Cambio",
+                                    "01-504" = "Consenso Federal",
+                                    "13" = "MAS",
+                                    "87" = "Libertad y Dignidad",
+                                    "88" = "Dignidad Popular",
+                                    "5" = "Democrata Cristiana"))
