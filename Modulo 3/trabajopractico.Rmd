@@ -402,7 +402,7 @@ Luego buscamos qué escuelas están a un radio de 10 cuadras a la redonda del ba
 
 Con estos pasos podemos pensar en ampliar el trabajo a otros barrios informales, y también podremos utilizar los datos del censo 2020 cuando estén disponibles. Creo que este tipo de metodología puede ser util para mapear necesidades de los barrios informales y pensar políticas públicas que podrá adoptar por sí el gobierno, o que podrá solicitarselo a la Justicia si no se cumplen.
 
-El código de este Rmarkdown está disponible [acá.](https://raw.githubusercontent.com/Demzayat/varios/master/Modulo%203/trabajopractico.Rmd)
+El código de este Rmarkdown está disponible [aca](https://raw.githubusercontent.com/Demzayat/varios/master/Modulo%203/trabajopractico.Rmd).
 
 
 
