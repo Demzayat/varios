@@ -1,0 +1,81 @@
+---
+title: "TP Modulo 4"
+author: "Demian Zayat"
+date: "9/25/2019"
+output: pdf_document
+---
+
+## Carga de datos
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+```
+Lo primero que tenemos que hacer para comenzar a analizar el dataset de datos 2015 de los equipos de futbol, es cargarlos. 
+
+```{r, message=FALSE}
+# Carga de datos
+datos_2015 <- read_csv2("datos_2015.csv",
+                      #escape_double=FALSE,
+                      locale=locale(encoding="LATIN1"),
+                      trim_ws=TRUE,)
+```
+
+## Análisis exploratorio de los datos 2015
+
+Al cargar la base de datos vemos que tiene una dimensión de `r dim(datos_2015)[1]` observaciones o filas y de `r dim(datos_2015)[2]` variables o columnas. 
+Las columas tiene los siguientes nombres:
+```{r}
+names(datos_2015)
+```
+
+Así vemos que la base de datos tiene el nombre del club de futbol correspondiente en la variable `club`, y luego los puntos que obtuvieron esos clubes en los torneos 2012/13, 2013/14 y 2014 (cuando no participó de ellos se indica 0 puntos), luego las variables relacionadas con la inversión del club, absoluta y relativa, y el valor del equipo. Luego la variable `libertadores` y `sudamericana` sobre si jugaron esas copas durante 2015, la variable `ascenso` sobre si esos equipos ascendieron en el 2014 (y el del 2015 fue su primer torneo en la primera); luego la Posición final en el torneo 2015 (`Pos`), con la cantidad de Puntos (`Pts`); Partidos Jugados (`PJ`), ganados (`PG`), empatados (`PE`), perdidos (`PP`), goles a favor (`GF`), goles en contra (`GC`), y diferencia de goles (`Dif`).
+
+Luego, 30 columnas con las posiciones de cada equipo en las distintas fechas.
+
+Podemos ver quienes quedaron en los primeros 10 lugares:
+```{r tabla_ordenados}
+datos_ordenados <- datos_2015 %>% 
+  arrange(Pos) %>% 
+  select(club, Pts, Pos, PG, PE, PP, GF, GC, Dif, libertadores, sudamericana)
+
+knitr::kable(datos_ordenados, booktabs = TRUE, format = "latex")
+```
+
+De esta tabla se desprende que `r datos_ordenados$club[1]` quedó en el primer lugar, y `r datos_ordenados$club[nrow(datos_ordenados)]` en el último.
+
+Podemos analizar las trayectorias de los primeros y de los últimos cinco a lo largo de las distintas fechas.
+
+```{r grafico_trayectorias}
+xfecha <- datos_2015 %>% 
+  arrange(Pos) %>% 
+  slice(1:5) %>% 
+  select(club, Pos_Fecha_1:Pos_Fecha_30) %>% 
+  gather(key = fecha, value = "Posicion", Pos_Fecha_1:Pos_Fecha_30)
+xfecha <- xfecha %>% 
+  mutate(fecha =  as.numeric(str_replace(fecha, pattern =  "Pos_Fecha_", replacement = "")))
+
+ggplot(data = xfecha) +
+  geom_path(aes(y = Posicion, x = fecha, group = club, color = club))+
+  scale_y_reverse()+
+  theme_bw()
+```
+
+Y la trayectoria de los cinco últimos
+```{r}
+xfecha2 <- datos_2015 %>% 
+  arrange(desc(Pos)) %>% 
+  slice(1:5) %>% 
+  select(club, Pos_Fecha_1:Pos_Fecha_30) %>% 
+  gather(key = fecha, value = "Posicion", Pos_Fecha_1:Pos_Fecha_30)
+xfecha2 <- xfecha2 %>% 
+  mutate(fecha =  as.numeric(str_replace(fecha, pattern =  "Pos_Fecha_", replacement = "")))
+
+ggplot(data = xfecha2) +
+  geom_path(aes(y = Posicion, x = fecha, group = club, color = club))+
+  scale_y_reverse()+
+  theme_bw()
+```
+
+
