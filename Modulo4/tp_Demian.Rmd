@@ -1,0 +1,180 @@
+---
+title: "TP Modulo 4"
+author: "Demian Zayat"
+date: "9/25/2019"
+output: html_document
+  
+---
+
+## Carga de datos
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(xtable)
+library(sjPlot)
+
+
+```
+Lo primero que tenemos que hacer para comenzar a analizar el dataset de datos 2015 de los equipos de futbol, es cargarlos. 
+
+```{r, message=FALSE}
+# Carga de datos
+datos_2015 <- read_csv2("datos_2015.csv",
+                      #escape_double=FALSE,
+                      locale=locale(encoding="LATIN1"),
+                      trim_ws=TRUE,)
+```
+
+## Análisis exploratorio de los datos 2015
+
+Al cargar la base de datos vemos que tiene una dimensión de `r dim(datos_2015)[1]` observaciones o filas y de `r dim(datos_2015)[2]` variables o columnas. 
+Las columas tiene los siguientes nombres:
+```{r}
+names(datos_2015)
+```
+
+Así vemos que la base de datos tiene el nombre del club de futbol correspondiente en la variable `club`, y luego los puntos que obtuvieron esos clubes en los torneos 2012/13, 2013/14 y 2014 (cuando no participó de ellos se indica 0 puntos), luego las variables relacionadas con la inversión del club, absoluta y relativa, y el valor del equipo. Luego la variable `libertadores` y `sudamericana` sobre si jugaron esas copas durante 2015, la variable `ascenso` sobre si esos equipos ascendieron en el 2014 (y el del 2015 fue su primer torneo en la primera); luego la Posición final en el torneo 2015 (`Pos`), con la cantidad de Puntos (`Pts`); Partidos Jugados (`PJ`), ganados (`PG`), empatados (`PE`), perdidos (`PP`), goles a favor (`GF`), goles en contra (`GC`), y diferencia de goles (`Dif`).
+
+Luego, 30 columnas con las posiciones de cada equipo en las distintas fechas.
+
+Podemos ver quienes cómo fueron los resultados, en la tabla de posiciones, ordenada por posición final:
+```{r tabla_ordenados}
+datos_ordenados <- datos_2015 %>% 
+  arrange(Pos) %>% 
+  select(club, Pts, Pos, PG, PE, PP, GF, GC, Dif, libertadores, sudamericana)
+
+knitr::kable(datos_ordenados, booktabs = TRUE, format = "latex")
+```
+
+De esta tabla se desprende que `r datos_ordenados$club[1]` quedó en el primer lugar, y `r datos_ordenados$club[nrow(datos_ordenados)]` en el último.
+
+Podemos analizar las trayectorias de los primeros y de los últimos cinco a lo largo de las distintas fechas.
+
+```{r grafico_trayectorias}
+xfecha <- datos_2015 %>% 
+  arrange(Pos) %>% 
+  slice(1:5) %>% 
+  select(club, Pos_Fecha_1:Pos_Fecha_30) %>% 
+  gather(key = fecha, value = "Posicion", Pos_Fecha_1:Pos_Fecha_30)
+xfecha <- xfecha %>% 
+  mutate(fecha =  as.numeric(str_replace(fecha, pattern =  "Pos_Fecha_", replacement = "")))
+
+ggplot(data = xfecha) +
+  geom_path(aes(y = Posicion, x = fecha, group = club, color = club), size = 1.2)+
+  labs(title = "Trayectoria de los primeros 5 equipos", 
+       subtitle = "Torneo 2015", x = "Fecha", y = "Posición")+
+  scale_y_reverse()+
+  theme_bw()
+```
+
+Y la trayectoria de los cinco últimos
+```{r}
+xfecha2 <- datos_2015 %>% 
+  arrange(desc(Pos)) %>% 
+  slice(1:5) %>% 
+  select(club, Pos_Fecha_1:Pos_Fecha_30) %>% 
+  gather(key = fecha, value = "Posicion", Pos_Fecha_1:Pos_Fecha_30)
+xfecha2 <- xfecha2 %>% 
+  mutate(fecha =  as.numeric(str_replace(fecha, pattern =  "Pos_Fecha_", replacement = "")))
+
+ggplot(data = xfecha2) +
+  geom_path(aes(y = Posicion, x = fecha, group = club, color = club), size = 1.2)+
+  labs(title = "Trayectoria de los últimos 5 equipos", 
+       subtitle = "Torneo 2015", x = "Fecha", y = "Posición")+
+  scale_y_reverse()+
+  theme_bw()
+```
+
+Con respecto a los puntos de los distintos equipos, podemos ver el siguiente análisis
+```{r}
+summary(datos_2015$Pts)
+sd(datos_2015$Pts)
+```
+
+Así, el promedio de puntos en el torneo fue de `r round(mean(datos_2015$Pts),2)` y el desvío estandar de `r round(sd(datos_2015$Pts),2)`. Y podemos hacer un gráfico. Parece una distribución normal, pero cuando ampliamos la cantidad de `breaks` no es tan acampanadada...
+```{r}
+par(mfrow = c(1,2))
+hist(datos_2015$Pts, breaks = 5, xlab = "Puntos", main = "Histograma breaks = 5",
+     col = "lightblue")
+hist(datos_2015$Pts, breaks = 10, xlab = "Puntos", main = "Histograma breaks = 10",
+     col = "lightblue")
+```
+También podemos hacer un plot con la dispersión de puntos del promedio (marcamos también los dos desvíos estandar del promedio)
+
+```{r}
+ggplot(data = datos_ordenados)+
+  geom_point (aes(x = Pts, y = reorder(club, Pts)))+
+  geom_vline(xintercept =  mean(datos_2015$Pts), color = "red")+
+  geom_vline(xintercept =  c(mean(datos_2015$Pts)+ 2*sd(datos_2015$Pts),
+                             mean(datos_2015$Pts)- 2*sd(datos_2015$Pts)),
+             color = "red", linetype = 2)+
+   geom_vline(xintercept =  c(mean(datos_2015$Pts)+ 1*sd(datos_2015$Pts),
+                             mean(datos_2015$Pts)- 1*sd(datos_2015$Pts)),
+             color = "red", linetype = 3)+
+  labs(title = "Puntajes del torneo 2015",
+       subtitle = "Promedio y 1 y 2 desvío estándares", x = "Puntos", y = "Club")+
+  theme_bw()
+```
+
+## Regresión lineal
+
+_Usar una reg. lineal para explicar la variable Pts (puntos) a partir de las variables Pts_2012_13, Pts_2013_14,Pts_2014, inversion_abs (inversión absoluta), inversion_relativa (inversión relativa), valor (valor en millones deeuros), libertadores (si participó en el 2015 en la Copa Libertadores), sudamericana (si participó en el 2015 en laCopa Sudamericana), ascenso (si ascendió)._
+
+Comenzaré por regresiones lineales simples. Primero voy a realizar tres regresiones para analizar si existe relación entre los puntos obtenidos en el torneo 2015, y los puntos obtenidos por el mismo equipo en los torneos 2012_13, 2013_14, y 2014. Para ello, deberé primero filtrar de la regresión los equipos que no jugaron esos torneos, por lo que figuran con 0 puntos (por ello los convierto a NA).
+```{r, messages = FALSE, fig.height= 6}
+datos_regresiones <- datos_2015 %>% 
+  select(club, Pts, Pts_2012_13, Pts_2013_14, Pts_2014) %>% 
+  na_if(0)
+
+regresion_2012 <- lm(Pts ~ Pts_2012_13, data = datos_regresiones)
+regresion_2013 <- lm(Pts ~ Pts_2013_14, data = datos_regresiones)
+regresion_2014 <- lm(Pts ~ Pts_2014, data = datos_regresiones)
+
+par(mfrow = c(2,2))
+plot(y = datos_regresiones$Pts, x = datos_regresiones$Pts_2012_13,
+     ylab = "Torneo 2015", xlab = "Torneo 2012/2013")
+  abline(regresion_2012, lwd = 3, col = "red")
+plot(y = datos_regresiones$Pts, x = datos_regresiones$Pts_2013_14,
+     ylab = "Torneo 2015", xlab = "Torneo 2013/2014")
+  abline(regresion_2013, lwd = 3, col = "red")
+plot(y = datos_regresiones$Pts, x = datos_regresiones$Pts_2014,
+     ylab = "Torneo 2015", xlab = "Torneo 2014")
+  abline(regresion_2014, lwd = 3, col = "red")
+
+```
+
+Luego de ver que estos gráficos señalen que  pobrablemente no exista correlación, armo una regresión lineal múltiple, y para ver si el modelo es posible, grafico los residudos
+
+```{r, fig.height=6}
+regresion_multiple <- lm(Pts ~ Pts_2012_13 + Pts_2013_14 + Pts_2014, 
+                         data = datos_regresiones)
+
+tab_model(regresion_multiple)
+
+par(mfrow = c(2,2))
+plot(regresion_multiple)
+```
+
+Lamentablemente, estos residuos nos indican que este modelo lineal no es satisfactorio. Especialmente la distribución de los residuos en el plot 1, donde la distribución no es regular al rededor de la línea, indicándonos que probablemente no sea una regresióin lineal, o que este modelo no encaja. Lo mismo sucede con el estadístico $R^2$, que al ser muy bajo (`r summary(regresion_multiple)[8]`) nos señala que el modelo tiene problemas.
+
+### Otras variables 1. _Show me the money_
+
+Podemos pensar otra regresión con otras variables. Por ejemplo, ¿existe alguna relación en el valor del equipo y los puntos que obtiene? Es decir, ¿la inversión en jugadores de futbol _caros_ repercute en cuántos puntos obtiene el club en el torneo? Analicemos eso.
+```{r}
+regresion_valor <- lm(Pts ~ valor, data = datos_2015)
+plot(y = datos_2015$Pts, x = datos_2015$valor, 
+     ylab = "Puntos torneo 2015", xlab = "Valor del club")
+abline(regresion_valor, lwd = 3, col = "red")
+tab_model(regresion_valor)
+```
+
+Y analizamos los residuos
+
+```{r}
+par(mfrow = c(2,2))
+plot(regresion_valor)
+```
+
+Si bien existe correlación significativa (valor p = `r round(regresion_valor[[1]][2], 4)`), los residuos nos señalan que el modelo no es perfecto. Podríamos intentar algunas tranformaciones a ver si mejora.
