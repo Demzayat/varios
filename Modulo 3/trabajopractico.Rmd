@@ -120,8 +120,7 @@ comuna4_geo <- censo_geo%>%
   filter(COMUNA == 4) %>% 
   select(RADIO_ID)
 
-barrios <- st_read(dsn = "/Users/demian/Downloads/CABA Datos", 
-                  layer = "CABA_GA_WGS84", quiet = TRUE)
+barrios <- read_sf("https://github.com/Demzayat/varios/raw/master/Modulo%203/barrios.geojson")
 comuna4_villa2124 <- barrios %>% 
   filter(FNA == "Villa 21-24") %>% 
   select(FNA)
@@ -234,20 +233,19 @@ De ese repositorio pude descargar las inscripciones para primer grado de los añ
 
 ```{r vacantes, message = FALSE}
 #Escuelas Geo
-escuelas <-  st_read(dsn = "establecimientos-educativos-zip",
-                     layer = "establecimientos-educativos", quiet = TRUE) %>% 
-  st_transform(4326) 
+escuelas <-  read_sf("https://github.com/Demzayat/varios/raw/master/Modulo%203/establecimientos-educativos.geojson")
+
 primarios <- escuelas %>% 
   filter(NIVMOD == "PriCom") %>% 
   mutate(CUEANEXO = as.numeric(as.character(CUEANEXO)))
 
 #Escuelas vacantes
-vacantes17 <- read_csv2("inscripciones-escolares-2017.csv", locale = locale(encoding = "latin1") ) %>% 
+vacantes17 <- read_csv2("http://cdn.buenosaires.gob.ar/datosabiertos/datasets/inscripcion-escolar/inscripciones-escolares-2017.csv", locale = locale(encoding = "latin1") ) %>% 
   filter(NIVEL == "PRIMARIO") %>% 
   group_by(ESTABLECIMIENTO, CUE_ANEXO) %>% 
   summarise(primero_17 = n())
 
-vacantes16 <- read_csv2("inscripciones-escolares-2016.csv", locale = locale(encoding = "UTF-8") )%>% 
+vacantes16 <- read_csv2("http://cdn.buenosaires.gob.ar/datosabiertos/datasets/inscripcion-escolar/inscripciones-escolares-2016.csv", locale = locale(encoding = "UTF-8") )%>% 
   filter(NIVEL == "PRIMARIO") %>% 
   group_by(ESTABLECIMIENTO) %>% 
   summarise(primero_16 = n())  
@@ -381,15 +379,15 @@ caminos <- caminos %>%
            lat_llegada = st_coordinates(primarias_villa)[,2]) %>% 
     st_set_geometry(NULL)
 
-escuelas_arcos <- mapdeck(style = mapdeck_style("streets"),
-        location = c(-58.399685, -34.654402), zoom = 10, token = key, pitch = 60) %>% 
-    add_arc(data = caminos,
-             layer_id = "caminos_escuelas",
-             destination = c("lon_salida", "lat_salida"),
-             origin  = c("lon_llegada", "lat_llegada")) %>% 
-    add_polygon(data = comuna4_villa2124)
+#escuelas_arcos <- mapdeck(style = mapdeck_style("streets"),
+#        location = c(-58.399685, -34.654402), zoom = 10, token = key, pitch = 60) %>% 
+#    add_arc(data = caminos,
+#             layer_id = "caminos_escuelas",
+#             destination = c("lon_salida", "lat_salida"),
+#             origin  = c("lon_llegada", "lat_llegada")) %>% 
+#    add_polygon(data = comuna4_villa2124)
 
-htmlwidgets::saveWidget(escuelas_arcos, file = "escuelas_arcos.html")
+#htmlwidgets::saveWidget(escuelas_arcos, file = "escuelas_arcos.html")
 ```
 
 <iframe width = 400 height=300 src='escuelas_arcos.html'> </iframe>

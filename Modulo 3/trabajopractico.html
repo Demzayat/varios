@@ -15,12 +15,12 @@
 
 <meta name="author" content="Demian Zayat" />
 
-<meta name="date" content="2019-09-08" />
+<meta name="date" content="2019-10-21" />
 
 <meta name="description" content="¿Existen suficientes vacantes escolares para los niños de la Villa 21-24?">
 
 <script id="pandoc-meta" type="application/json">
-{"date":"2019-09-08","output":{"pagedown::html_paged":{"self_contained":true,"toc":true,"css":["default","default-fonts","my-css.css"]}},"author":"Demian Zayat","title":"¿Existen suficientes vacantes escolares para los niños de la Villa 21-24?"}
+{"date":"2019-10-21","output":{"pagedown::html_paged":{"self_contained":true,"toc":true,"css":["default","default-fonts","my-css.css"]}},"author":"Demian Zayat","title":"¿Existen suficientes vacantes escolares para los niños de la Villa 21-24?"}
 </script>
 
 <title>¿Existen suficientes vacantes escolares para los niños de la Villa 21-24?</title>
@@ -30744,7 +30744,7 @@ break-after: avoid;
 <div id="header" class="title-page">
 <h1 class="title">¿Existen suficientes vacantes escolares para los niños de la Villa 21-24?</h1>
 <h2 class="author">Demian Zayat</h2>
-<h2 class="date">2019-09-08</h2>
+<h2 class="date">2019-10-21</h2>
 </div>
 </div>
 
@@ -30835,11 +30835,10 @@ La jueza ordenó la realización del censo. Sin embargo, diversas reparticiones 
 <a class="sourceLine" id="cb3-2" title="2"><span class="st">  </span><span class="kw">filter</span>(COMUNA <span class="op">==</span><span class="st"> </span><span class="dv">4</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb3-3" title="3"><span class="st">  </span><span class="kw">select</span>(RADIO_ID)</a>
 <a class="sourceLine" id="cb3-4" title="4"></a>
-<a class="sourceLine" id="cb3-5" title="5">barrios &lt;-<span class="st"> </span><span class="kw">st_read</span>(<span class="dt">dsn =</span> <span class="st">&quot;/Users/demian/Downloads/CABA Datos&quot;</span>, </a>
-<a class="sourceLine" id="cb3-6" title="6">                  <span class="dt">layer =</span> <span class="st">&quot;CABA_GA_WGS84&quot;</span>, <span class="dt">quiet =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb3-7" title="7">comuna4_villa2124 &lt;-<span class="st"> </span>barrios <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb3-8" title="8"><span class="st">  </span><span class="kw">filter</span>(FNA <span class="op">==</span><span class="st"> &quot;Villa 21-24&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb3-9" title="9"><span class="st">  </span><span class="kw">select</span>(FNA)</a></code></pre></div>
+<a class="sourceLine" id="cb3-5" title="5">barrios &lt;-<span class="st"> </span><span class="kw">read_sf</span>(<span class="st">&quot;https://github.com/Demzayat/varios/raw/master/Modulo%203/barrios.geojson&quot;</span>)</a>
+<a class="sourceLine" id="cb3-6" title="6">comuna4_villa2124 &lt;-<span class="st"> </span>barrios <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-7" title="7"><span class="st">  </span><span class="kw">filter</span>(FNA <span class="op">==</span><span class="st"> &quot;Villa 21-24&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb3-8" title="8"><span class="st">  </span><span class="kw">select</span>(FNA)</a></code></pre></div>
 <p>Y hacemos un primer mapa para ver cómo vienen los datos de los radios censales de la Villa 21-24 tanto del shapefile de la Plataforma Abierta Nacional del Hábitat, como del shapefile del Censo 2010.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">ggplot</span>()<span class="op">+</span></a>
 <a class="sourceLine" id="cb4-2" title="2"><span class="st">  </span><span class="kw">geom_sf</span>(<span class="dt">data =</span> comuna4_geo, <span class="dt">fill =</span> <span class="ot">NA</span>, <span class="dt">col =</span> <span class="st">&quot;grey40&quot;</span>)<span class="op">+</span></a>
@@ -30917,35 +30916,34 @@ La jueza ordenó la realización del censo. Sin embargo, diversas reparticiones 
 <p>También será necesario calcular cuántas vacantes hay en cada escuela. Esto no está disponible facilmente, pero podrá calcularse en razón de las inscripciones realizadas por escuela, lo que sí está disponible en el <a href="https://data.buenosaires.gob.ar/dataset/inscripcion-escolar/archivo/123.3">repositorio</a>.</p>
 <p>De ese repositorio pude descargar las inscripciones para primer grado de los años 2016 y 2017. Cómo son similares, pero no idénticos, sacaré el promedio y multiplicaré por siete para saber la cantidad total de vacantes por escuela.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="co">#Escuelas Geo</span></a>
-<a class="sourceLine" id="cb9-2" title="2">escuelas &lt;-<span class="st">  </span><span class="kw">st_read</span>(<span class="dt">dsn =</span> <span class="st">&quot;establecimientos-educativos-zip&quot;</span>,</a>
-<a class="sourceLine" id="cb9-3" title="3">                     <span class="dt">layer =</span> <span class="st">&quot;establecimientos-educativos&quot;</span>, <span class="dt">quiet =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-4" title="4"><span class="st">  </span><span class="kw">st_transform</span>(<span class="dv">4326</span>) </a>
-<a class="sourceLine" id="cb9-5" title="5">primarios &lt;-<span class="st"> </span>escuelas <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-6" title="6"><span class="st">  </span><span class="kw">filter</span>(NIVMOD <span class="op">==</span><span class="st"> &quot;PriCom&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-7" title="7"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">CUEANEXO =</span> <span class="kw">as.numeric</span>(<span class="kw">as.character</span>(CUEANEXO)))</a>
-<a class="sourceLine" id="cb9-8" title="8"></a>
-<a class="sourceLine" id="cb9-9" title="9"><span class="co">#Escuelas vacantes</span></a>
-<a class="sourceLine" id="cb9-10" title="10">vacantes17 &lt;-<span class="st"> </span><span class="kw">read_csv2</span>(<span class="st">&quot;inscripciones-escolares-2017.csv&quot;</span>, <span class="dt">locale =</span> <span class="kw">locale</span>(<span class="dt">encoding =</span> <span class="st">&quot;latin1&quot;</span>) ) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-11" title="11"><span class="st">  </span><span class="kw">filter</span>(NIVEL <span class="op">==</span><span class="st"> &quot;PRIMARIO&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-12" title="12"><span class="st">  </span><span class="kw">group_by</span>(ESTABLECIMIENTO, CUE_ANEXO) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-13" title="13"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">primero_17 =</span> <span class="kw">n</span>())</a>
-<a class="sourceLine" id="cb9-14" title="14"></a>
-<a class="sourceLine" id="cb9-15" title="15">vacantes16 &lt;-<span class="st"> </span><span class="kw">read_csv2</span>(<span class="st">&quot;inscripciones-escolares-2016.csv&quot;</span>, <span class="dt">locale =</span> <span class="kw">locale</span>(<span class="dt">encoding =</span> <span class="st">&quot;UTF-8&quot;</span>) )<span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-16" title="16"><span class="st">  </span><span class="kw">filter</span>(NIVEL <span class="op">==</span><span class="st"> &quot;PRIMARIO&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-17" title="17"><span class="st">  </span><span class="kw">group_by</span>(ESTABLECIMIENTO) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-18" title="18"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">primero_16 =</span> <span class="kw">n</span>())  </a>
+<a class="sourceLine" id="cb9-2" title="2">escuelas &lt;-<span class="st">  </span><span class="kw">read_sf</span>(<span class="st">&quot;https://github.com/Demzayat/varios/raw/master/Modulo%203/establecimientos-educativos.geojson&quot;</span>)</a>
+<a class="sourceLine" id="cb9-3" title="3"></a>
+<a class="sourceLine" id="cb9-4" title="4">primarios &lt;-<span class="st"> </span>escuelas <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-5" title="5"><span class="st">  </span><span class="kw">filter</span>(NIVMOD <span class="op">==</span><span class="st"> &quot;PriCom&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-6" title="6"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">CUEANEXO =</span> <span class="kw">as.numeric</span>(<span class="kw">as.character</span>(CUEANEXO)))</a>
+<a class="sourceLine" id="cb9-7" title="7"></a>
+<a class="sourceLine" id="cb9-8" title="8"><span class="co">#Escuelas vacantes</span></a>
+<a class="sourceLine" id="cb9-9" title="9">vacantes17 &lt;-<span class="st"> </span><span class="kw">read_csv2</span>(<span class="st">&quot;http://cdn.buenosaires.gob.ar/datosabiertos/datasets/inscripcion-escolar/inscripciones-escolares-2017.csv&quot;</span>, <span class="dt">locale =</span> <span class="kw">locale</span>(<span class="dt">encoding =</span> <span class="st">&quot;latin1&quot;</span>) ) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-10" title="10"><span class="st">  </span><span class="kw">filter</span>(NIVEL <span class="op">==</span><span class="st"> &quot;PRIMARIO&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-11" title="11"><span class="st">  </span><span class="kw">group_by</span>(ESTABLECIMIENTO, CUE_ANEXO) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-12" title="12"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">primero_17 =</span> <span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb9-13" title="13"></a>
+<a class="sourceLine" id="cb9-14" title="14">vacantes16 &lt;-<span class="st"> </span><span class="kw">read_csv2</span>(<span class="st">&quot;http://cdn.buenosaires.gob.ar/datosabiertos/datasets/inscripcion-escolar/inscripciones-escolares-2016.csv&quot;</span>, <span class="dt">locale =</span> <span class="kw">locale</span>(<span class="dt">encoding =</span> <span class="st">&quot;UTF-8&quot;</span>) )<span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-15" title="15"><span class="st">  </span><span class="kw">filter</span>(NIVEL <span class="op">==</span><span class="st"> &quot;PRIMARIO&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-16" title="16"><span class="st">  </span><span class="kw">group_by</span>(ESTABLECIMIENTO) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-17" title="17"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">primero_16 =</span> <span class="kw">n</span>())  </a>
+<a class="sourceLine" id="cb9-18" title="18"></a>
 <a class="sourceLine" id="cb9-19" title="19"></a>
-<a class="sourceLine" id="cb9-20" title="20"></a>
-<a class="sourceLine" id="cb9-21" title="21">vacantes_prom &lt;-<span class="st"> </span>vacantes17 <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-22" title="22"><span class="st">  </span><span class="kw">bind_cols</span>(., vacantes16) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-23" title="23"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>ESTABLECIMIENTO1) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-24" title="24"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">total =</span> <span class="kw">round</span>((primero_<span class="dv">17</span><span class="op">+</span>primero_<span class="dv">16</span>)<span class="op">/</span><span class="dv">2</span><span class="op">*</span><span class="dv">7</span>,<span class="dv">0</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-25" title="25"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-26" title="26"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>primero_<span class="dv">17</span>, <span class="op">-</span>primero_<span class="dv">16</span>, <span class="op">-</span>ESTABLECIMIENTO)</a>
-<a class="sourceLine" id="cb9-27" title="27"></a>
-<a class="sourceLine" id="cb9-28" title="28">primarios_vacantes &lt;-<span class="st"> </span>primarios <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-29" title="29"><span class="st">  </span><span class="kw">left_join</span>(vacantes_prom, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;CUEANEXO&quot;</span> =<span class="st"> &quot;CUE_ANEXO&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-30" title="30"><span class="st">  </span><span class="kw">select</span>(CUEANEXO, DOM_EDIFIC, NOMBRE_ABR, DE, COMUNA, total)</a></code></pre></div>
+<a class="sourceLine" id="cb9-20" title="20">vacantes_prom &lt;-<span class="st"> </span>vacantes17 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-21" title="21"><span class="st">  </span><span class="kw">bind_cols</span>(., vacantes16) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-22" title="22"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>ESTABLECIMIENTO1) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-23" title="23"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">total =</span> <span class="kw">round</span>((primero_<span class="dv">17</span><span class="op">+</span>primero_<span class="dv">16</span>)<span class="op">/</span><span class="dv">2</span><span class="op">*</span><span class="dv">7</span>,<span class="dv">0</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-24" title="24"><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-25" title="25"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>primero_<span class="dv">17</span>, <span class="op">-</span>primero_<span class="dv">16</span>, <span class="op">-</span>ESTABLECIMIENTO)</a>
+<a class="sourceLine" id="cb9-26" title="26"></a>
+<a class="sourceLine" id="cb9-27" title="27">primarios_vacantes &lt;-<span class="st"> </span>primarios <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-28" title="28"><span class="st">  </span><span class="kw">left_join</span>(vacantes_prom, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;CUEANEXO&quot;</span> =<span class="st"> &quot;CUE_ANEXO&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb9-29" title="29"><span class="st">  </span><span class="kw">select</span>(CUEANEXO, DOM_EDIFIC, NOMBRE_ABR, DE, COMUNA, total)</a></code></pre></div>
 <p>Y graficamos los de la COMUNA 4 en un mapa interactivo, con el centro en el límite de la Villa 21-24. Cuando pasamos el puntero vemos el nombre de la escuela y la cantidad de vacantes.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">primarios_comuna_<span class="dv">4</span> &lt;-<span class="st"> </span>primarios_vacantes <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb10-2" title="2"><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">long =</span> <span class="kw">st_coordinates</span>(primarios_vacantes)[,<span class="dv">1</span>],</a>
@@ -30998,7 +30996,7 @@ La jueza ordenó la realización del censo. Sin embargo, diversas reparticiones 
 <a class="sourceLine" id="cb12-9" title="9">primarias_villa &lt;-<span class="st"> </span>primarias_villa <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb12-10" title="10"><span class="st">    </span><span class="kw">mutate</span> ( <span class="dt">distancia =</span> <span class="kw">st_distance</span>(primarias_villa, <span class="kw">st_centroid</span>(comuna4_villa2124)) ) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb12-11" title="11"><span class="st">    </span><span class="kw">select</span>(<span class="op">-</span>CUEANEXO, <span class="op">-</span>DE, <span class="op">-</span>COMUNA, villa)</a></code></pre></div>
-<p>De este modo, hay 6 escuelas que están dentro de un radio menor a 10 cuadras del centro de la villa que pueden ofrecer vacantes para estos niños. Ellas son las siguientes:</p>
+<p>De este modo, hay 0 escuelas que están dentro de un radio menor a 10 cuadras del centro de la villa que pueden ofrecer vacantes para estos niños. Ellas son las siguientes:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">primarias_villa <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb13-2" title="2"><span class="st">  </span><span class="kw">st_set_geometry</span>(<span class="ot">NULL</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb13-3" title="3"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>villa) <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -31023,92 +31021,10 @@ distancia
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
-Lynch 3536
-</td>
-<td style="text-align:left;">
-EPjs 24
-</td>
-<td style="text-align:right;">
-406
-</td>
-<td style="text-align:right;">
-1063.9820 [m]
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Avda. Amancio Alcorta 2502
-</td>
-<td style="text-align:left;">
-EPjc 25
-</td>
-<td style="text-align:right;">
-374
-</td>
-<td style="text-align:right;">
-1333.5068 [m]
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Iguazú 1110
-</td>
-<td style="text-align:left;">
-EPjc 10
-</td>
-<td style="text-align:right;">
-392
-</td>
-<td style="text-align:right;">
-744.0679 [m]
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Lafayette 1879
-</td>
-<td style="text-align:left;">
-EPjs 11
-</td>
-<td style="text-align:right;">
-840
-</td>
-<td style="text-align:right;">
-789.6231 [m]
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Rio Cuarto y Montesquieu
-</td>
-<td style="text-align:left;">
-EPjs 12
-</td>
-<td style="text-align:right;">
-1141
-</td>
-<td style="text-align:right;">
-264.8935 [m]
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Avda. Amancio Alcorta 3402
-</td>
-<td style="text-align:left;">
-EPjc 16
-</td>
-<td style="text-align:right;">
-326
-</td>
-<td style="text-align:right;">
-851.8153 [m]
-</td>
 </tr>
 </tbody>
 </table>
-<p>Si estas escuelas sólo le dan vacantes a los niños de la villa 21-24, habría un total de 3479 vacantes, para los 4434 niños. Sin embargo, no hay que dejar de tener en cuenta que hay otros niños en los alrededores de la Villa 21-24 que también requieren vacantes escolares.</p>
+<p>Si estas escuelas sólo le dan vacantes a los niños de la villa 21-24, habría un total de 0 vacantes, para los 4434 niños. Sin embargo, no hay que dejar de tener en cuenta que hay otros niños en los alrededores de la Villa 21-24 que también requieren vacantes escolares.</p>
 <p>Podemos calcular cuántos niños hay en esos radios censales, del mismo modo que lo hicimos con los niños de la villa 21-24.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">alrededores &lt;-<span class="st"> </span><span class="kw">cuales_radios</span>(comuna4_geo, comuna4_villa2124_buffer)</a>
 <a class="sourceLine" id="cb14-2" title="2"></a>
@@ -31117,7 +31033,7 @@ EPjc 16
 <a class="sourceLine" id="cb14-5" title="5"></a>
 <a class="sourceLine" id="cb14-6" title="6">alrededores_edad_escolar &lt;-<span class="st"> </span>alrededores_censo <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb14-7" title="7"><span class="st">  </span><span class="kw">filter</span>(edad <span class="op">&gt;=</span><span class="st"> </span><span class="dv">6</span> <span class="op">&amp;</span><span class="st"> </span>edad <span class="op">&lt;=</span><span class="st"> </span><span class="dv">12</span>)</a></code></pre></div>
-<p>Cuando sumamos los alrededores, vemos que la cantidad de vacantes es sensiblemente inferior a la requerida. Así, las 6 escuelas cercanas a la Villa 21-24, con sus 3479, vacantes, deben proveerle educación primaria a 6915, lo que es llamativamente insuficiente.</p>
+<p>Cuando sumamos los alrededores, vemos que la cantidad de vacantes es sensiblemente inferior a la requerida. Así, las 0 escuelas cercanas a la Villa 21-24, con sus 0, vacantes, deben proveerle educación primaria a 6915, lo que es llamativamente insuficiente.</p>
 <p>Es cierto que, como vimos en el mapa interactivo anterior, hay más escuelas disponibles en <em>los alrededores</em> de <em>los alrededores de la villa</em>, y esto nos podría llevar a un loop. Podría ser que en la Comuna (o en realidad en el Distrito Escolar, que es la unidad territorial para las escuelas) en total haya vacantes disponibles para todos los niños del lugar. Pero no es poco importante cómo estan distribuidas las vacantes, que es lo que queríamos analizar, sobre si las escuelas dentro o cercanas a la Villa 21-24 tiene vacantes para todos los niños de la zona.</p>
 </div>
 <div id="las-escuelas-estan-realmente-a-10-cuadras-de-la-villa" class="section level2">
@@ -31133,15 +31049,15 @@ EPjc 16
 <a class="sourceLine" id="cb15-6" title="6">           <span class="dt">lat_llegada =</span> <span class="kw">st_coordinates</span>(primarias_villa)[,<span class="dv">2</span>]) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb15-7" title="7"><span class="st">    </span><span class="kw">st_set_geometry</span>(<span class="ot">NULL</span>)</a>
 <a class="sourceLine" id="cb15-8" title="8"></a>
-<a class="sourceLine" id="cb15-9" title="9">escuelas_arcos &lt;-<span class="st"> </span><span class="kw">mapdeck</span>(<span class="dt">style =</span> <span class="kw">mapdeck_style</span>(<span class="st">&quot;streets&quot;</span>),</a>
-<a class="sourceLine" id="cb15-10" title="10">        <span class="dt">location =</span> <span class="kw">c</span>(<span class="op">-</span><span class="fl">58.399685</span>, <span class="fl">-34.654402</span>), <span class="dt">zoom =</span> <span class="dv">10</span>, <span class="dt">token =</span> key, <span class="dt">pitch =</span> <span class="dv">60</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-11" title="11"><span class="st">    </span><span class="kw">add_arc</span>(<span class="dt">data =</span> caminos,</a>
-<a class="sourceLine" id="cb15-12" title="12">             <span class="dt">layer_id =</span> <span class="st">&quot;caminos_escuelas&quot;</span>,</a>
-<a class="sourceLine" id="cb15-13" title="13">             <span class="dt">destination =</span> <span class="kw">c</span>(<span class="st">&quot;lon_salida&quot;</span>, <span class="st">&quot;lat_salida&quot;</span>),</a>
-<a class="sourceLine" id="cb15-14" title="14">             <span class="dt">origin  =</span> <span class="kw">c</span>(<span class="st">&quot;lon_llegada&quot;</span>, <span class="st">&quot;lat_llegada&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-15" title="15"><span class="st">    </span><span class="kw">add_polygon</span>(<span class="dt">data =</span> comuna4_villa2124)</a>
+<a class="sourceLine" id="cb15-9" title="9"><span class="co">#escuelas_arcos &lt;- mapdeck(style = mapdeck_style(&quot;streets&quot;),</span></a>
+<a class="sourceLine" id="cb15-10" title="10"><span class="co">#        location = c(-58.399685, -34.654402), zoom = 10, token = key, pitch = 60) %&gt;% </span></a>
+<a class="sourceLine" id="cb15-11" title="11"><span class="co">#    add_arc(data = caminos,</span></a>
+<a class="sourceLine" id="cb15-12" title="12"><span class="co">#             layer_id = &quot;caminos_escuelas&quot;,</span></a>
+<a class="sourceLine" id="cb15-13" title="13"><span class="co">#             destination = c(&quot;lon_salida&quot;, &quot;lat_salida&quot;),</span></a>
+<a class="sourceLine" id="cb15-14" title="14"><span class="co">#             origin  = c(&quot;lon_llegada&quot;, &quot;lat_llegada&quot;)) %&gt;% </span></a>
+<a class="sourceLine" id="cb15-15" title="15"><span class="co">#    add_polygon(data = comuna4_villa2124)</span></a>
 <a class="sourceLine" id="cb15-16" title="16"></a>
-<a class="sourceLine" id="cb15-17" title="17">htmlwidgets<span class="op">::</span><span class="kw">saveWidget</span>(escuelas_arcos, <span class="dt">file =</span> <span class="st">&quot;escuelas_arcos.html&quot;</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb15-17" title="17"><span class="co">#htmlwidgets::saveWidget(escuelas_arcos, file = &quot;escuelas_arcos.html&quot;)</span></a></code></pre></div>
 <iframe width="400" height="300" src="escuelas_arcos.html">
 </iframe>
 </div>
