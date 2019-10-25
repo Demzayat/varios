@@ -2,8 +2,9 @@
 title: "TP Modulo 4"
 author: "Demian Zayat"
 date: "9/25/2019"
-output: html_document
-  
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ## Carga de datos
@@ -21,10 +22,8 @@ Lo primero que tenemos que hacer para comenzar a analizar el dataset de datos 20
 
 ```{r, message=FALSE}
 # Carga de datos
-datos_2015 <- read_csv2("datos_2015.csv",
-                      #escape_double=FALSE,
-                      locale=locale(encoding="LATIN1"),
-                      trim_ws=TRUE,)
+datos_2015 <- read.csv2("datos_2015.csv", encoding = "latin1")
+datos_2015$valor <- as.numeric(as.character(datos_2015$valor))
 ```
 
 ## Análisis exploratorio de los datos 2015
@@ -45,7 +44,8 @@ datos_ordenados <- datos_2015 %>%
   arrange(Pos) %>% 
   select(club, Pts, Pos, PG, PE, PP, GF, GC, Dif, libertadores, sudamericana)
 
-knitr::kable(datos_ordenados, booktabs = TRUE, format = "latex")
+knitr::kable(datos_ordenados)  %>% 
+  kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
 De esta tabla se desprende que `r datos_ordenados$club[1]` quedó en el primer lugar, y `r datos_ordenados$club[nrow(datos_ordenados)]` en el último.
@@ -101,6 +101,7 @@ hist(datos_2015$Pts, breaks = 5, xlab = "Puntos", main = "Histograma breaks = 5"
 hist(datos_2015$Pts, breaks = 10, xlab = "Puntos", main = "Histograma breaks = 10",
      col = "lightblue")
 ```
+
 También podemos hacer un plot con la dispersión de puntos del promedio (marcamos también los dos desvíos estandar del promedio)
 
 ```{r}
@@ -145,29 +146,32 @@ plot(y = datos_regresiones$Pts, x = datos_regresiones$Pts_2014,
 
 ```
 
-Luego de ver que estos gráficos señalen que  pobrablemente no exista correlación, armo una regresión lineal múltiple, y para ver si el modelo es posible, grafico los residudos
+Luego de ver que estos gráficos señalen que  probablemente no exista correlación, armo una regresión lineal múltiple, y para ver si el modelo es posible, grafico los residudos
 
 ```{r, fig.height=6}
 regresion_multiple <- lm(Pts ~ Pts_2012_13 + Pts_2013_14 + Pts_2014, 
                          data = datos_regresiones)
 
-tab_model(regresion_multiple)
+tab_model(regresion_multiple, 
+          show.se = TRUE,  show.df = TRUE,  show.stat = TRUE,  show.ci = FALSE,  show.fstat = TRUE)
 
 par(mfrow = c(2,2))
 plot(regresion_multiple)
 ```
 
-Lamentablemente, estos residuos nos indican que este modelo lineal no es satisfactorio. Especialmente la distribución de los residuos en el plot 1, donde la distribución no es regular al rededor de la línea, indicándonos que probablemente no sea una regresióin lineal, o que este modelo no encaja. Lo mismo sucede con el estadístico $R^2$, que al ser muy bajo (`r summary(regresion_multiple)[8]`) nos señala que el modelo tiene problemas.
+Lamentablemente, estos diagnosticos nos indican que este modelo lineal no es satisfactorio. Especialmente la distribución de los residuos en el plot 1, donde la distribución no es regular al rededor de la línea, indicándonos que probablemente no sea una regresióin lineal, o que este modelo no encaja. Lo mismo sucede con el estadístico $R^2$, que al ser muy bajo (`r summary(regresion_multiple)[8]`) nos señala que el modelo tiene problemas.
 
 ### Otras variables 1. _Show me the money_
 
-Podemos pensar otra regresión con otras variables. Por ejemplo, ¿existe alguna relación en el valor del equipo y los puntos que obtiene? Es decir, ¿la inversión en jugadores de futbol _caros_ repercute en cuántos puntos obtiene el club en el torneo? Analicemos eso.
+Podemos pensar otra regresión con otras variables. Por ejemplo, ¿existe alguna relación en el valor del equipo y los puntos que obtiene? Es decir, ¿la inversión en jugadores de futbol repercute en cuántos puntos obtiene el club en el torneo? Analicemos eso.
 ```{r}
 regresion_valor <- lm(Pts ~ valor, data = datos_2015)
 plot(y = datos_2015$Pts, x = datos_2015$valor, 
      ylab = "Puntos torneo 2015", xlab = "Valor del club")
 abline(regresion_valor, lwd = 3, col = "red")
-tab_model(regresion_valor)
+tab_model(regresion_valor, 
+          show.se = TRUE,  show.df = TRUE,  show.stat = TRUE,  show.ci = FALSE,  show.fstat = TRUE)
+
 ```
 
 Y analizamos los residuos
@@ -177,4 +181,101 @@ par(mfrow = c(2,2))
 plot(regresion_valor)
 ```
 
-Si bien existe correlación significativa (valor p = `r round(regresion_valor[[1]][2], 4)`), los residuos nos señalan que el modelo no es perfecto. Podríamos intentar algunas tranformaciones a ver si mejora.
+Si bien existe correlación significativa, los residuos nos señalan que el modelo no es perfecto. Podríamos intentar algunas tranformaciones a ver si mejora. El valor, que está en dinero podemos transformarlo con el logaritmo. Y los puntos los podemos transformar con raíz cuadrada.
+```{r}
+datos_transf <- data.frame(datos_2015$Pts, datos_2015$valor,
+                           "sqrt.Pts" = sqrt(datos_2015$Pts), 
+                           "log.valor" = log10(datos_2015$valor)) %>% 
+  arrange(desc(datos_2015.Pts))
+
+kable(datos_transf) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = F)
+```
+
+Y hago un gráfico, a ver si mejoró y ploteo los graficos de diagnostico.
+
+```{r}
+regresion_transf <- lm(sqrt.Pts ~ log.valor, data = datos_transf)
+plot(y = datos_transf$sqrt.Pts, x = datos_transf$log.valor, 
+     ylab = "Raíz cuadrada de Puntos", xlab = "Logaritmo de valor")
+abline(regresion_transf, lwd = 3, col = "red")
+tab_model(regresion_transf, 
+          show.se = TRUE,  show.df = TRUE,  show.stat = TRUE,  show.ci = FALSE,  show.fstat = TRUE)
+
+#residudos
+par(mfrow = c(2,2))
+plot(regresion_transf)
+```
+
+Este modelo encaja mucho mejor!
+
+### Intervalo de confianza
+
+Luego de las transformaciones, vimos que nuestra regresión es de un modelo lineal, con la siguiente fórmula.
+
+$y = \beta{_0} + \beta{_1}x$
+
+$\sqrt{(Pts)} = intercept + pendiente*\log({valor})$ 
+
+$\sqrt{(Pts)} = 3.88 + 2.22* \log(valor)$
+
+Y en base a esto, para calcular el intervalo de confianza podemos utilizar la técnica de Boostrap no paramétrico. Para ello, haremos una tabla con 10.000 replicaciones de $\beta{_0}$ y de $\beta{_1}$.
+
+```{r}
+#funcion que reordena y recalcula la regresion
+set.seed(999)
+regresiones <- function(X,Y){
+  boot <- sample.int(n = nrow(datos_transf), size = nrow(datos_transf), replace = TRUE)
+  boot_fit <- lm(sqrt.Pts ~ log.valor, data=datos_transf[boot,])
+  return(coef(boot_fit))
+  }
+
+# matriz de 10000 replicaciones de los coeficientes de la regresion
+boot <- t(replicate(10000,regresiones(X,Y))) 
+head(boot, 10) %>% 
+  kable() %>% 
+  kable_styling(bootstrap_options = "striped", full_width = F)
+```
+
+El promedio de la intercepción nos da `r round(mean(boot[,1]),3)`, y de la pendiente `r round(mean(boot[,2]),3)`. Esto es bastante similar de nuestros valores originales ( que eran `r round(coef(regresion_transf),3)`).
+
+Y podemos graficarlo
+
+```{r}
+par(mfrow=c(1,2))
+MASS::truehist(boot[,1], main = "Boostrap del intercept", xlab = "intercept")
+abline(v =median(boot[,1]), col = "red", lty = 2)
+MASS::truehist(boot[,2], main = "Boostrap de la pendiente", xlab = "pendiente")
+abline(v = median(boot[,2]), col = "red", lty = 2)
+```
+
+Luego, un gráfico de la regresión
+```{r}
+plot(x = boot[,2], y = boot[,1], pch=19, cex=0.1, 
+     ylab = "Intercept", xlab = "pendiente",
+     main = "Scaterplot del Boostrap de la regresión")
+```
+
+Y calcular el Intervalo de confianza para cada parámetro debemos analizar los quartiles de los parametros.
+
+```{r}
+# Intervalos de Confianza para beta_0 
+
+beta0 <- quantile(boot[,1], p= c(.025,.25,.5,.75,.975))
+beta1 <- quantile(boot[,2], p= c(.025,.25,.5,.75,.975))
+
+kable(list(beta0, beta1)) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = F)
+```
+
+De este modo, el intervalo del 95% de confianza para la intercepción va de `r beta0[1]` a `r beta0[5]`; y el de la pendiente va de `r beta1[1]` a `r beta1[5]`.
+
+
+### Test de hipótesis
+
+_Para el modelo elegido, ¿se puede decir que existe algún coeficiente de las variables explicativas estadísticamente distinto de cero? Pruebe el test de hipótesis (Busque para contextualizar en Agresti, el test F, capítulo 11, en particular 11.4 -11.4)_
+
+
+
+
+
